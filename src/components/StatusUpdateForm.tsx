@@ -5,15 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import type { OrderStatus } from "@prisma/client";
 import { updateOrderStatus } from "@/actions/orders";
-import { STATUS_LABELS, STATUS_ORDER, STATUS_COLORS } from "@/lib/statuses";
-
-/** Map STATUS_COLORS "bg-X-100 text-X-800" → dot "bg-X-500" */
-function dotColor(colorClass: string): string {
-  const match = colorClass.match(/bg-(\w+-\d+)/);
-  if (!match) return "bg-zinc-400";
-  const base = match[1].replace(/-\d+$/, "");
-  return `bg-${base}-500`;
-}
+import { STATUS_LABELS, STATUS_ORDER, STATUS_COLORS, statusDotClass } from "@/lib/statuses";
 
 export function StatusUpdateForm({
   orderId,
@@ -45,36 +37,38 @@ export function StatusUpdateForm({
     <div className="h-fit rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
       <h2 className="mb-3 text-sm font-semibold">Update status</h2>
 
-      {/* Color-chip radio group — data-testid="status-select" on the group */}
-      <div
-        data-testid="status-select"
-        role="radiogroup"
-        aria-label="Order status"
-        className="mb-3 flex flex-wrap gap-2"
-      >
-        {STATUS_ORDER.map((s) => {
-          const selected = status === s;
-          const colorClass = STATUS_COLORS[s];
-          const dot = dotColor(colorClass);
-          return (
-            <button
-              key={s}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              onClick={() => setStatus(s)}
-              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                selected
-                  ? `ring-2 ring-offset-1 ring-brand border-brand ${colorClass}`
-                  : `border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50`
-              }`}
-            >
-              <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} aria-hidden="true" />
-              {STATUS_LABELS[s]}
-            </button>
-          );
-        })}
-      </div>
+      {/* Native radio group — keyboard-accessible via Tab-into + arrow keys */}
+      <fieldset data-testid="status-select" className="mb-3">
+        <legend className="sr-only">Update status</legend>
+        <div className="flex flex-wrap gap-2">
+          {STATUS_ORDER.map((s) => {
+            const selected = status === s;
+            const colorClass = STATUS_COLORS[s];
+            const dot = statusDotClass(s);
+            return (
+              <label
+                key={s}
+                className={`relative flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                  selected
+                    ? `ring-2 ring-offset-1 ring-brand border-brand ${colorClass}`
+                    : `border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50`
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="status"
+                  value={s}
+                  checked={selected}
+                  onChange={() => setStatus(s)}
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                />
+                <span className={`pointer-events-none h-2 w-2 shrink-0 rounded-full ${dot}`} aria-hidden="true" />
+                {STATUS_LABELS[s]}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
 
       <textarea
         data-testid="status-note"

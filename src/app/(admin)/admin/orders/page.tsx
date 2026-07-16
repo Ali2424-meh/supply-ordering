@@ -11,20 +11,11 @@ import { requireRole } from "@/lib/guards";
 import { pageCount, parsePage } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 import { supplyEnabled } from "@/lib/settings";
-import { STATUS_LABELS, STATUS_ORDER, STATUS_COLORS } from "@/lib/statuses";
+import { STATUS_LABELS, STATUS_ORDER, statusDotClass } from "@/lib/statuses";
 
 const PAGE_SIZE = 50;
 
 export const metadata: Metadata = { title: "Order requests" };
-
-/** Dot color extracted from STATUS_COLORS bg class for summary card dots */
-function dotColorFromBg(bgClass: string): string {
-  // e.g. "bg-blue-100 text-blue-800" → "bg-blue-500"
-  const match = bgClass.match(/bg-(\w+-\d+)/);
-  if (!match) return "bg-zinc-400";
-  const base = match[1].replace(/-\d+$/, "");
-  return `bg-${base}-500`;
-}
 
 export default async function AdminOrdersPage({
   searchParams,
@@ -131,7 +122,7 @@ export default async function AdminOrdersPage({
         {STATUS_ORDER.map((s) => {
           const count = countByStatus[s] ?? 0;
           const isActive = status === s;
-          const dotColor = dotColorFromBg(STATUS_COLORS[s]);
+          const dotColor = statusDotClass(s);
           return (
             <Link
               key={s}

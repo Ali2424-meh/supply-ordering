@@ -25,3 +25,15 @@ export const STATUS_COLORS: Record<OrderStatus, string> = {
   CANCELLED: "bg-zinc-200 text-zinc-700",
   ISSUE_ON_HOLD: "bg-red-100 text-red-800",
 };
+
+/**
+ * Derives a dot color class from a STATUS_COLORS entry.
+ * e.g. "bg-blue-100 text-blue-800" → "bg-blue-500"
+ */
+export function statusDotClass(status: OrderStatus): string {
+  const colorClass = STATUS_COLORS[status];
+  const match = colorClass.match(/bg-(\w+-\d+)/);
+  if (!match) return "bg-zinc-400";
+  const base = match[1].replace(/-\d+$/, "");
+  return `bg-${base}-500`;
+}
