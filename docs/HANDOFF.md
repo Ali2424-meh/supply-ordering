@@ -90,6 +90,28 @@ marked complete below.
   integration tests, 19 Playwright browser tests, and the optimized production
   build pass.
 
+## UI/UX improvement pass (2026-07-17)
+
+Plan: `docs/superpowers/plans/2026-07-17-ui-ux-improvement.md`. All tasks
+reviewed and approved; full suite green after each (lint, typecheck, 24 unit,
+39 integration, 19 E2E).
+
+- **A (34e92ce):** SupplyHub design system — Bricolage Grotesque + Inter via
+  next/font, brand tokens (@theme), Brand mark, in-house Toaster, restyled
+  shared components, lucide icons.
+- **B (0bbac56 + 9a5a9e6):** worker portal — quick-add on catalogue cards,
+  live debounced search, sticky mobile cart bar, remove-with-Undo toast,
+  richer supplies home (greeting, resume-cart, category chips). Fix round:
+  undo only after successful remove; C-03 E2E genuinely proves live search;
+  valid card markup (no button-in-anchor); toast clears the sticky bar.
+- **C (602d37c):** one-tap Reorder from past orders (guarded action + 6
+  integration tests, buttons on order cards/detail).
+- **D (9e4c37d + f089e42):** admin — dark responsive sidebar, status summary
+  cards filtering the orders table, keyboard-accessible native-radio status
+  chips, deduped status dot helper (unit-tested).
+- **E:** local ImportRun rows truncated (user request); production DB starts
+  empty anyway.
+
 ## Deferred minor findings (triage at final review)
 
 - `OrderItem.productId` deliberately has no FK constraint (snapshot design) —
