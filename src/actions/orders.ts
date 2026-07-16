@@ -9,6 +9,8 @@ import { guardAction } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
 import { OrderStatus, Prisma, type Role } from "@prisma/client";
 
+const idSchema = z.string().min(1);
+
 export type SubmitResult =
   | { ok: true; orderNumber: string }
   | { ok: false; error: string; invalidProductIds?: string[] };
@@ -142,6 +144,86 @@ export async function submitOrder(): Promise<SubmitResult> {
     return { ok: true, orderNumber: outcome.orderNumber };
   }
   return outcome;
+}
+
+export async function reorderFromOrder(
+  orderId: string,
+): Promise<{ ok: boolean; added: number; skipped: number; error?: string }> {
+  const user = await guardAction(["CLEANER"]);
+  const oid = idSchema.parse(orderId);
+
+  // Verify ownership
+  const order = await prisma.order.findFirst({
+    where: { id: oid, userId: user.id },
+    include: { items: true },
+  });
+  if (!order) throw new Error("Order not found.");
+
+  // Collect all non-null productIds, then look up their active status
+  const productIds = order.items
+    .map((i) => i.productId)
+    .filter((id): id is string => id !== null);
+
+  const activeProductIds = new Set<string>();
+  if (productIds.length > 0) {
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds }, active: true },
+      select: { id: true },
+    });
+    for (const p of products) activeProductIds.add(p.id);
+  }
+
+  let skipped = 0;
+  const toAdd: Array<{ productId: string; quantity: number }> = [];
+
+  for (const item of order.items) {
+    if (!item.productId || !activeProductIds.has(item.productId)) {
+      skipped += 1;
+    } else {
+      toAdd.push({ productId: item.productId, quantity: item.quantity });
+    }
+  }
+
+  if (toAdd.length === 0) {
+    return {
+      ok: false,
+      added: 0,
+      skipped,
+      error: "None of the items in this order are currently available.",
+    };
+  }
+
+  // Upsert each active line into the cart using the same lock + clamp discipline
+  // as addToCart (user-row FOR UPDATE, feature toggle check, LEAST(999,...) clamp).
+  await prisma.$transaction(async (tx) => {
+    const [freshUser] = await tx.$queryRaw<
+      Array<{ role: Role; disabled: boolean }>
+    >`SELECT "role", "disabled" FROM "User" WHERE "id" = ${user.id} FOR UPDATE`;
+    if (!freshUser) throw new Error("Not signed in.");
+    if (freshUser.role !== "CLEANER") throw new Error("Not allowed.");
+    if (freshUser.disabled) throw new Error("Your account is disabled.");
+
+    const [feature] = await tx.$queryRaw<Array<{ value: string }>>`
+      SELECT "value" FROM "Setting"
+      WHERE "key" = 'supplyOrderingEnabled'
+      FOR SHARE
+    `;
+    if (feature?.value !== "true") {
+      throw new Error("Supply ordering is currently disabled.");
+    }
+
+    for (const line of toAdd) {
+      await tx.$executeRaw`
+        INSERT INTO "CartItem" AS cart ("id", "userId", "productId", "quantity")
+        VALUES (${crypto.randomUUID()}, ${user.id}, ${line.productId}, ${line.quantity})
+        ON CONFLICT ("userId", "productId") DO UPDATE
+        SET "quantity" = LEAST(999, cart."quantity" + EXCLUDED."quantity")
+      `;
+    }
+  });
+
+  revalidatePath("/supplies", "layout");
+  return { ok: true, added: toAdd.length, skipped };
 }
 
 export async function updateOrderStatus(

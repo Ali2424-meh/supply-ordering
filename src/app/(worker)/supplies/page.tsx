@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ShoppingCart, ShoppingBag } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { Pagination } from "@/components/Pagination";
+import { ReorderButton } from "@/components/ReorderButton";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatAud } from "@/lib/format";
 import { requireRole } from "@/lib/guards";
@@ -115,10 +116,14 @@ export default async function SuppliesHome({
           <>
             <ul className="flex flex-col gap-2">
               {orders.map((order) => (
-                <li key={order.id} data-testid="order-card">
+                <li
+                  key={order.id}
+                  data-testid="order-card"
+                  className="flex items-stretch gap-2 rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:border-brand/30 hover:shadow"
+                >
                   <Link
                     href={`/supplies/orders/${order.orderNumber}`}
-                    className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:border-brand/30 hover:shadow sm:flex-row sm:items-center sm:justify-between"
+                    className="flex min-w-0 flex-1 flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
                       <p className="font-medium">{order.orderNumber}</p>
@@ -135,6 +140,12 @@ export default async function SuppliesHome({
                       </p>
                     </div>
                   </Link>
+                  <div className="flex shrink-0 items-center border-l border-zinc-100 px-3">
+                    <ReorderButton
+                      orderId={order.id}
+                      className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-zinc-500 transition hover:bg-brand-tint hover:text-brand"
+                    />
+                  </div>
                 </li>
               ))}
             </ul>

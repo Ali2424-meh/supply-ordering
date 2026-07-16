@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
 import { StatusTimeline } from "@/components/StatusTimeline";
+import { ReorderButton } from "@/components/ReorderButton";
 import { formatAud } from "@/lib/format";
 import { requireRole } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
@@ -25,7 +26,10 @@ export default async function OrderPage({
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-xl font-semibold">{order.orderNumber}</h1>
-        <StatusBadge status={order.status} />
+        <div className="flex items-center gap-2">
+          <StatusBadge status={order.status} />
+          <ReorderButton orderId={order.id} />
+        </div>
       </div>
       <div className="mb-6 overflow-x-auto">
         <table className="w-full min-w-md text-sm">
