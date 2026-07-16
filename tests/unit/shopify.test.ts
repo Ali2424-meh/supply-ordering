@@ -1,6 +1,12 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import page from "../fixtures/shopify-page.json";
-import { mapProductsPage, parsePriceToCents } from "../../src/lib/sync/shopify";
+import {
+  fetchAllCatalogueLines,
+  mapProductsPage,
+  parsePriceToCents,
+} from "../../src/lib/sync/shopify";
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe("parsePriceToCents", () => {
   test("parses dollar strings without float drift", () => {
@@ -38,5 +44,52 @@ describe("mapProductsPage (S-01 basis)", () => {
   });
   test("rejects malformed payloads", () => {
     expect(() => mapProductsPage({ nope: true }, "x")).toThrow();
+  });
+});
+
+describe("fetchAllCatalogueLines", () => {
+  test("uses a live-store-safe page size and stops at the first empty page", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(page)))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ products: [] })),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      fetchAllCatalogueLines("https://cleanersgallery.com.au"),
+    ).resolves.toHaveLength(3);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      "https://cleanersgallery.com.au/products.json?limit=50&page=1",
+      {
+        headers: { "user-agent": "SupplyOrdering/1.0" },
+        signal: expect.any(AbortSignal),
+      },
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      "https://cleanersgallery.com.au/products.json?limit=50&page=2",
+      {
+        headers: { "user-agent": "SupplyOrdering/1.0" },
+        signal: expect.any(AbortSignal),
+      },
+    );
+  });
+
+  test("retries transient Shopify failures", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 503 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ products: [] })),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      fetchAllCatalogueLines("https://cleanersgallery.com.au"),
+    ).resolves.toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });

@@ -47,6 +47,6 @@ export async function applyCatalogueLines(
       });
       return { added, updated, deactivated };
     },
-    { timeout: 300_000 },
+    { timeout: 900_000 },
   );
 }

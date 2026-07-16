@@ -52,16 +52,59 @@ export function mapProductsPage(page: unknown, baseUrl: string): CatalogueLine[]
   );
 }
 
+const PAGE_SIZE = 50;
+const MAX_PAGES = 200;
+const RETRYABLE_STATUSES = new Set([429, 502, 503, 504]);
+
+async function fetchCataloguePage(url: string, pageNum: number) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        headers: { "user-agent": "SupplyOrdering/1.0" },
+        signal: AbortSignal.timeout(15_000),
+      });
+    } catch (error) {
+      if (attempt === 3) throw error;
+      await new Promise((resolve) =>
+        setTimeout(resolve, 250 * 2 ** attempt),
+      );
+      continue;
+    }
+    if (response.ok) return response;
+    if (!RETRYABLE_STATUSES.has(response.status) || attempt === 3) {
+      throw new Error(
+        `Catalogue fetch failed for page ${pageNum}: HTTP ${response.status}`,
+      );
+    }
+    await response.body?.cancel();
+    await new Promise((resolve) =>
+      setTimeout(resolve, 250 * 2 ** attempt),
+    );
+  }
+  throw new Error(`Catalogue fetch failed for page ${pageNum}.`);
+}
+
 export async function fetchAllCatalogueLines(baseUrl: string): Promise<CatalogueLine[]> {
   const all: CatalogueLine[] = [];
-  for (let pageNum = 1; pageNum <= 40; pageNum++) {
-    const res = await fetch(`${baseUrl}/products.json?limit=250&page=${pageNum}`, {
-      headers: { "user-agent": "SupplyOrdering/1.0" },
-    });
-    if (!res.ok) throw new Error(`Catalogue fetch failed: HTTP ${res.status}`);
+  let reachedEnd = false;
+  // Shopify permits larger responses, but complex catalogue pages can
+  // intermittently return 503. Smaller pages plus bounded retries are more
+  // reliable while retaining the original 10,000-product ceiling.
+  for (let pageNum = 1; pageNum <= MAX_PAGES; pageNum++) {
+    const url = `${baseUrl}/products.json?limit=${PAGE_SIZE}&page=${pageNum}`;
+    const res = await fetchCataloguePage(url, pageNum);
     const lines = mapProductsPage(await res.json(), baseUrl);
-    if (lines.length === 0) break;
+    if (lines.length === 0) {
+      reachedEnd = true;
+      break;
+    }
     all.push(...lines);
+  }
+  if (!reachedEnd) {
+    throw new Error(
+      `Catalogue exceeds the supported ${PAGE_SIZE * MAX_PAGES} products.`,
+    );
   }
   return all;
 }
