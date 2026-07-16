@@ -47,7 +47,7 @@ marked complete below.
 | 9. Order email | ✅ complete | ebe25e2 | React Email + capture/Resend sender; configurable verified `EMAIL_FROM`; Resend errors surface and post-commit failures cannot roll back orders; 15 unit + 14 integration tests pass; Claude CLI still limited |
 | 10. Status updates | ✅ complete | b00cb36 | manager/admin authorization, trimmed internal notes, locked status history updates; 18 integration tests pass; local review approved |
 | 11. Product CRUD + audit | ✅ complete | 09b592a | shared Zod input, transactional create/edit, audit + activation events, price history; 23 integration tests pass; local review approved |
-| 12. Catalogue sync action | ✅ complete | df0dd80 | atomic apply + price history/deactivation; transaction-scoped advisory lock avoids pooled-connection bug; import success/failure tracking; 28 integration tests pass |
+| 12. Catalogue sync action | ✅ complete | df0dd80 + 5b51ed0 | atomic apply + price history/deactivation; dedicated single-connection session lock; transient live-store retry/timeout handling; interrupted-run cleanup; 28 integration tests pass |
 | 13. App shells + nav | ✅ complete | 40cddb9 | responsive worker/admin navigation, role guards/placeholders, animated cart/status/shared UI, atomic admin toggle; metadata deferred finding resolved |
 | 14. Cleaner catalogue UI | ✅ complete | 8b11923 | responsive active-only grid, URL search/category filters, detail page, quantity stepper + reduced-motion-aware cart flight; build/lint/typecheck pass |
 | 15. Cart UI + submit flow | ✅ complete | 3222953 + 6c9a6c0 | responsive animated cart/total/removal, inactive-line shake, pending-safe submission/confirmation, visible guard errors; reduced-motion respected |
@@ -55,10 +55,17 @@ marked complete below.
 | 17. Admin orders UI | ✅ complete | ce73492 | responsive all-worker order table/search/filter/sort, contact/detail, status+note form, internal timeline, error boundary; build/lint/typecheck pass |
 | 18. Admin catalogue UI | ✅ complete | 363234a | responsive active/inactive catalogue + filters, accessible shared create/edit form, guarded refresh and import history; full unit/integration/build checks pass |
 | 19. Playwright E2E suite | ✅ complete | cbf2fdb | isolated reset/seeded DB, managed store + email fixtures, C/SM/A/M/U/S scenarios and mobile overflow smoke; 19 E2E tests pass |
-| 20. Full verification sweep | ⬜ | | |
+| 20. Full verification sweep | ✅ complete | 40c7b14 | `npm run check` green: lint, typecheck, 17 unit, 28 integration, 19 E2E; production build green; live sync added 4,225 variants and cleaner category filter smoke passed |
 
 ## Deferred minor findings (triage at final review)
 
-- `prisma/seed.ts` error path could `process.exit(1)` (Task 2 review, spec-matching).
 - `OrderItem.productId` deliberately has no FK constraint (snapshot design) —
   application code must not write dangling ids (Task 2 review, design note).
+
+## Final review status
+
+- Local diff/spec review found no remaining blocking or important issue.
+- Claude Code independent review was attempted again after the final build, but
+  the CLI remained capped until 2am Asia/Manila. It did not review or approve
+  the final changes; rerun it after the cap resets if an additional opinion is
+  desired.
