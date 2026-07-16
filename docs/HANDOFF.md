@@ -45,7 +45,7 @@ marked complete below.
 | 7. Cart actions + int-test harness | ✅ complete | f2f700e + 9af243c | review fix atomically caps merged quantities at 999; 6 DB integration tests pass; Vitest 4 harness stubs `next/cache`; Claude CLI still limited |
 | 8. Order submission action | ✅ complete | 62b9edf | transaction rechecks auth state/toggle, snapshots items, clears cart; per-user lock prevents concurrent double-submit; 13 integration tests pass; Claude CLI still limited |
 | 9. Order email | ✅ complete | ebe25e2 | React Email + capture/Resend sender; configurable verified `EMAIL_FROM`; Resend errors surface and post-commit failures cannot roll back orders; 15 unit + 14 integration tests pass; Claude CLI still limited |
-| 10. Status updates | ⬜ | | |
+| 10. Status updates | ✅ complete | b00cb36 | manager/admin authorization, trimmed internal notes, locked status history updates; 18 integration tests pass; local review approved |
 | 11. Product CRUD + audit | ⬜ | | |
 | 12. Catalogue sync action | ⬜ | | |
 | 13. App shells + nav | ⬜ | | responsive constraint applies from here on |
