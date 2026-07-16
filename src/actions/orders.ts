@@ -1,16 +1,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { cartTotalCents, findInvalidLines } from "@/lib/cart";
 import { sendOrderSubmittedEmail } from "@/lib/email/send";
 import { formatOrderNumber } from "@/lib/format";
 import { guardAction } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
-import type { Role } from "@prisma/client";
+import { OrderStatus, type Role } from "@prisma/client";
 
 export type SubmitResult =
   | { ok: true; orderNumber: string }
   | { ok: false; error: string; invalidProductIds?: string[] };
+
+const statusSchema = z.nativeEnum(OrderStatus);
 
 export async function submitOrder(): Promise<SubmitResult> {
   const user = await guardAction(["CLEANER"]);
@@ -119,4 +122,40 @@ export async function submitOrder(): Promise<SubmitResult> {
     return { ok: true, orderNumber: outcome.orderNumber };
   }
   return outcome;
+}
+
+export async function updateOrderStatus(
+  orderId: string,
+  toStatus: OrderStatus,
+  note?: string,
+): Promise<void> {
+  const actor = await guardAction(["SUPPLY_MANAGER", "ADMIN"]);
+  const target = statusSchema.parse(toStatus);
+  const trimmedNote = note?.trim() || null;
+
+  await prisma.$transaction(async (tx) => {
+    const [order] = await tx.$queryRaw<
+      Array<{ id: string; status: OrderStatus }>
+    >`
+      SELECT "id", "status" FROM "Order"
+      WHERE "id" = ${orderId}
+      FOR UPDATE
+    `;
+    if (!order) throw new Error("Order not found.");
+    await tx.order.update({
+      where: { id: order.id },
+      data: { status: target },
+    });
+    await tx.orderEvent.create({
+      data: {
+        orderId: order.id,
+        fromStatus: order.status,
+        toStatus: target,
+        note: trimmedNote,
+        actorId: actor.id,
+      },
+    });
+  });
+  revalidatePath("/admin/orders", "layout");
+  revalidatePath("/supplies", "layout");
 }
