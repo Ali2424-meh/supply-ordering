@@ -20,6 +20,18 @@ describe("cart actions", () => {
     expect(items[0].quantity).toBe(5);
   });
 
+  test("addToCart clamps the merged quantity to 999", async () => {
+    const user = await makeUser("CLEANER");
+    const product = await makeProduct();
+    asUser(user);
+    await addToCart(product.id, 900);
+    await addToCart(product.id, 200);
+    const item = await db.cartItem.findUnique({
+      where: { userId_productId: { userId: user.id, productId: product.id } },
+    });
+    expect(item?.quantity).toBe(999);
+  });
+
   test("addToCart rejects inactive products", async () => {
     const user = await makeUser("CLEANER");
     const product = await makeProduct({ active: false });

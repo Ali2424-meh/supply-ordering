@@ -19,11 +19,14 @@ export async function addToCart(
   if (!product || !product.active) {
     throw new Error("This product is not available.");
   }
-  await prisma.cartItem.upsert({
-    where: { userId_productId: { userId: user.id, productId: pid } },
-    update: { quantity: { increment: qty } },
-    create: { userId: user.id, productId: pid, quantity: qty },
-  });
+  // Keep the merge and upper bound in one statement so concurrent additions
+  // cannot leave a cart line above the documented maximum.
+  await prisma.$executeRaw`
+    INSERT INTO "CartItem" AS cart ("id", "userId", "productId", "quantity")
+    VALUES (${crypto.randomUUID()}, ${user.id}, ${pid}, ${qty})
+    ON CONFLICT ("userId", "productId") DO UPDATE
+    SET "quantity" = LEAST(999, cart."quantity" + EXCLUDED."quantity")
+  `;
   revalidatePath("/supplies", "layout");
 }
 
