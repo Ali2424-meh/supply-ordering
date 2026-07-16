@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
+import { Home, ShoppingBag, LogOut } from "lucide-react";
 import { signOutAction } from "@/actions/auth";
+import { Brand } from "@/components/Brand";
 import { CartBadge } from "@/components/CartBadge";
 import { NavLink } from "@/components/NavLink";
 import { requireRole } from "@/lib/guards";
@@ -16,16 +18,22 @@ export default async function WorkerLayout({
   const cartCount = await prisma.cartItem.count({ where: { userId: user.id } });
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-4xl bg-zinc-50">
+    <div className="mx-auto min-h-screen w-full max-w-4xl" style={{ background: "var(--color-paper)" }}>
       <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 bg-white/95 p-3 shadow-sm backdrop-blur sm:rounded-b-xl sm:p-4">
-        <nav aria-label="Worker" className="flex items-center gap-3 text-sm font-medium sm:gap-4">
-          <NavLink href="/supplies" exact>Supplies</NavLink>
-          <NavLink href="/supplies/catalogue">Catalogue</NavLink>
-        </nav>
+        <div className="flex items-center gap-4">
+          <Brand variant="header" />
+          <nav aria-label="Worker" className="flex items-center gap-1 text-sm font-medium">
+            <NavLink href="/supplies" exact icon={<Home size={15} aria-hidden="true" />}>Supplies</NavLink>
+            <NavLink href="/supplies/catalogue" icon={<ShoppingBag size={15} aria-hidden="true" />}>Catalogue</NavLink>
+          </nav>
+        </div>
         <div className="flex items-center gap-2">
           <CartBadge count={cartCount} />
           <form action={signOutAction}>
-            <button className="min-h-10 text-sm text-zinc-500">Sign out</button>
+            <button className="flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700">
+              <LogOut size={15} aria-hidden="true" />
+              <span className="hidden sm:inline">Sign out</span>
+            </button>
           </form>
         </div>
       </header>

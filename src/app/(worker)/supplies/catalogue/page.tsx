@@ -1,10 +1,11 @@
-import Form from "next/form";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { Prisma } from "@prisma/client";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { EmptyState } from "@/components/EmptyState";
 import { Pagination } from "@/components/Pagination";
 import { ProductGrid } from "@/components/ProductGrid";
+import { SearchBar } from "@/components/SearchBar";
 import { requireRole } from "@/lib/guards";
 import { pageCount, parsePage } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
@@ -66,25 +67,13 @@ export default async function CataloguePage({
   return (
     <div>
       <h1 className="mb-4 text-xl font-semibold">Product catalogue</h1>
-      <Form
-        action="/supplies/catalogue"
-        className="mb-3 flex flex-col gap-2 sm:flex-row"
-      >
-        <label className="w-full">
-          <span className="sr-only">Search products</span>
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="Search name, variant or SKU…"
-            maxLength={200}
-            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 text-sm shadow-sm"
-          />
-        </label>
-        {category && <input type="hidden" name="category" value={category} />}
-        <button className="min-h-10 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white shadow-sm">
-          Search
-        </button>
-      </Form>
+      <div className="mb-3">
+        <Suspense fallback={
+          <div className="min-h-10 w-full rounded-lg border border-zinc-200 bg-white shadow-sm" />
+        }>
+          <SearchBar defaultValue={q} category={category} />
+        </Suspense>
+      </div>
       <CategoryFilter
         categories={categories.map((item) => item.category!)}
         active={category}

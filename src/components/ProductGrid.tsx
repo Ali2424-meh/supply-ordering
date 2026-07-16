@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { formatAud } from "@/lib/format";
+import { QuickAdd } from "@/components/QuickAdd";
 
 type GridProduct = {
   id: string;
@@ -49,26 +50,29 @@ export function ProductGrid({ products }: { products: GridProduct[] }) {
                   href={`/supplies/catalogue/${product.id}`}
                   className="block h-full rounded-xl border border-zinc-200 bg-white p-2 shadow-sm transition-shadow hover:border-zinc-300 hover:shadow-md sm:p-3"
                 >
-                  <motion.img
-                    layoutId={`product-image-${product.id}`}
-                    src={product.imageUrl ?? "/placeholder.svg"}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    onError={(event) => {
-                      event.currentTarget.src = "/placeholder.svg";
-                    }}
-                    className="mb-2 aspect-square w-full rounded-lg bg-zinc-100 object-contain"
-                  />
+                  <div className="mb-2 overflow-hidden rounded-lg bg-zinc-100">
+                    <motion.img
+                      layoutId={`product-image-${product.id}`}
+                      src={product.imageUrl ?? "/placeholder.svg"}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      onError={(event) => {
+                        event.currentTarget.src = "/placeholder.svg";
+                      }}
+                      className="aspect-square w-full object-contain transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
                   <p className="text-sm font-medium">{product.name}</p>
                   {product.variantName && (
                     <p className="text-xs text-zinc-500">
                       {product.variantName}
                     </p>
                   )}
-                  <p className="mt-1 text-sm font-semibold">
+                  <p className="mt-1 text-sm font-semibold text-zinc-900">
                     {formatAud(product.priceCents)}
                   </p>
+                  <QuickAdd productId={product.id} imageUrl={product.imageUrl} />
                 </Link>
               </motion.li>
             ))}

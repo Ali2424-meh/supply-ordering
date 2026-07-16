@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { Home } from "lucide-react";
 import { SubmittedCheck } from "@/components/SubmittedCheck";
 import { requireRole } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
@@ -18,14 +19,17 @@ export default async function SubmittedPage({
   });
   if (!ownedOrder) notFound();
   return (
-    <div>
-      <SubmittedCheck orderNumber={orderNumber} />
-      <Link
-        href="/supplies"
-        className="block min-h-10 text-center text-sm text-blue-600 underline"
-      >
-        Back to my orders
-      </Link>
+    <div className="mx-auto max-w-md py-4">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <SubmittedCheck orderNumber={orderNumber} />
+        <Link
+          href="/supplies"
+          className="mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-brand-hover"
+        >
+          <Home size={15} aria-hidden="true" />
+          Back to my orders
+        </Link>
+      </div>
     </div>
   );
 }

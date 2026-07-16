@@ -28,8 +28,9 @@ test("C-03: catalogue lists only active products with search and category filter
   await expect(page.locator("body")).not.toContainText("Retired Mop");
   await page.getByRole("link", { name: "Chemicals" }).click();
   await expect(page.getByTestId("product-card")).toHaveCount(1);
+  // Live search: type into the search input and wait for the debounce (300ms) to filter results.
+  // There is no submit button — the SearchBar updates ?q= via router.replace automatically.
   await page.fill('input[name="q"]', "Glass");
-  await page.getByRole("button", { name: "Search" }).click();
   await expect(page.getByTestId("product-card")).toHaveCount(1);
 });
 
