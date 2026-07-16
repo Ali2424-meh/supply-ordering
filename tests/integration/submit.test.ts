@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { asUser, db, makeProduct, makeUser, resetDb } from "./helpers";
 import { submitOrder } from "../../src/actions/orders";
 
@@ -55,6 +55,32 @@ describe("submitOrder", () => {
     });
     const item = await db.orderItem.findFirst();
     expect(item?.priceCentsSnapshot).toBe(1000);
+  });
+
+  test("email failure after commit does not roll back the order", async () => {
+    const user = await makeUser("CLEANER");
+    const product = await makeProduct();
+    await cartFor(user.id, [[product.id, 1]]);
+    asUser(user);
+    const previousInbox = process.env.TEAM_INBOX;
+    process.env.TEAM_INBOX = "";
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    try {
+      expect(await submitOrder()).toEqual({
+        ok: true,
+        orderNumber: "OR-00001",
+      });
+      expect(await db.order.count()).toBe(1);
+      expect(errorSpy).toHaveBeenCalledWith(
+        "order email failed",
+        expect.any(Error),
+      );
+    } finally {
+      errorSpy.mockRestore();
+      if (previousInbox === undefined) delete process.env.TEAM_INBOX;
+      else process.env.TEAM_INBOX = previousInbox;
+    }
   });
 
   test("C-06: rejects carts containing inactive products, reports which", async () => {

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { cartTotalCents, findInvalidLines } from "@/lib/cart";
+import { sendOrderSubmittedEmail } from "@/lib/email/send";
 import { formatOrderNumber } from "@/lib/format";
 import { guardAction } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
@@ -10,11 +11,6 @@ import type { Role } from "@prisma/client";
 export type SubmitResult =
   | { ok: true; orderNumber: string }
   | { ok: false; error: string; invalidProductIds?: string[] };
-
-async function notifyTeam(orderNumber: string): Promise<void> {
-  // Replaced with real email in the email task.
-  console.log(`[email stub] new order ${orderNumber}`);
-}
 
 export async function submitOrder(): Promise<SubmitResult> {
   const user = await guardAction(["CLEANER"]);
@@ -95,16 +91,32 @@ export async function submitOrder(): Promise<SubmitResult> {
       },
     });
     await tx.cartItem.deleteMany({ where: { userId: user.id } });
-    return { ok: true as const, orderNumber };
+    return {
+      ok: true as const,
+      orderNumber,
+      email: {
+        orderNumber,
+        workerName: user.name,
+        workerEmail: user.email,
+        items: cart.map((item) => ({
+          name: item.product.name,
+          variant: item.product.variantName,
+          quantity: item.quantity,
+          priceCents: item.product.priceCents,
+        })),
+        totalCents,
+      },
+    };
   });
 
   if (outcome.ok) {
     try {
-      await notifyTeam(outcome.orderNumber);
+      await sendOrderSubmittedEmail(outcome.email);
     } catch (error) {
       console.error("order email failed", error);
     }
     revalidatePath("/supplies", "layout");
+    return { ok: true, orderNumber: outcome.orderNumber };
   }
   return outcome;
 }
