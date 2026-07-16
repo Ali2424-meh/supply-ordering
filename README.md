@@ -38,3 +38,21 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Prisma version note
 
 Prisma is pinned to v6.x. Prisma v7 requires a `prisma.config.js` and removes the inline datasource `url = env(...)` used in `prisma/schema.prisma`. Do not upgrade to v7 without migrating that config.
+
+## Deploy (Vercel + Neon)
+
+Env vars required in Vercel Project Settings:
+
+| Var | Value |
+| --- | --- |
+| `DATABASE_URL` | Neon **pooled** connection string |
+| `AUTH_SECRET` | `openssl rand -base64 32` |
+| `EMAIL_MODE` | `resend` |
+| `RESEND_API_KEY` | from resend.com |
+| `EMAIL_FROM` | verified Resend sender |
+| `TEAM_INBOX` | team email for order notifications |
+| `CATALOGUE_BASE_URL` | `https://cleanersgallery.com.au` |
+
+One-time DB setup (from local machine against Neon **direct** URL):
+`DATABASE_URL=<neon-direct-url> npx prisma migrate deploy && DATABASE_URL=<neon-direct-url> npm run db:seed`
+Then change seeded passwords / replace seed users for real staff.
