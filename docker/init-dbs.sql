@@ -1,0 +1,2 @@
+CREATE DATABASE supply_test;
+CREATE DATABASE supply_e2e;

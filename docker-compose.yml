@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: supply
+      POSTGRES_PASSWORD: supply
+      POSTGRES_DB: supply
+    ports: ["5432:5432"]
+    volumes:
+      - ./docker/init-dbs.sql:/docker-entrypoint-initdb.d/init-dbs.sql
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
