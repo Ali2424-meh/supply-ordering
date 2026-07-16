@@ -18,6 +18,7 @@
 - Products are deactivated, never deleted. Order items keep name/variant/price snapshots.
 - All catalogue/order list state lives in URL search params, server-filtered.
 - Animations: Motion (`motion/react`), transform/opacity only, 150–400 ms, whole app wrapped in `<MotionConfig reducedMotion="user">`.
+- **Responsive on mobile, tablet, and desktop** (user requirement): every screen must be usable at 375px, 768px, and 1280px widths. Worker portal is mobile-first. Admin area: sidebar collapses to a top bar / stacked nav below `md:`; tables must not overflow the viewport — wrap them in `overflow-x-auto` or stack cells on small screens. Use Tailwind responsive prefixes (`sm: md: lg:`), no fixed pixel widths on containers.
 - Test names include spec scenario IDs, e.g. `test("C-06: …")`.
 - External catalogue base URL comes from env `CATALOGUE_BASE_URL` (default `https://cleanersgallery.com.au`); tests never hit the live store.
 - Email: `EMAIL_MODE=capture` writes JSON to `.email-capture/` instead of sending via Resend.
