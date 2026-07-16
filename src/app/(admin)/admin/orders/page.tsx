@@ -11,11 +11,20 @@ import { requireRole } from "@/lib/guards";
 import { pageCount, parsePage } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 import { supplyEnabled } from "@/lib/settings";
-import { STATUS_LABELS, STATUS_ORDER } from "@/lib/statuses";
+import { STATUS_LABELS, STATUS_ORDER, STATUS_COLORS } from "@/lib/statuses";
 
 const PAGE_SIZE = 50;
 
 export const metadata: Metadata = { title: "Order requests" };
+
+/** Dot color extracted from STATUS_COLORS bg class for summary card dots */
+function dotColorFromBg(bgClass: string): string {
+  // e.g. "bg-blue-100 text-blue-800" → "bg-blue-500"
+  const match = bgClass.match(/bg-(\w+-\d+)/);
+  if (!match) return "bg-zinc-400";
+  const base = match[1].replace(/-\d+$/, "");
+  return `bg-${base}-500`;
+}
 
 export default async function AdminOrdersPage({
   searchParams,
@@ -49,6 +58,32 @@ export default async function AdminOrdersPage({
       : {}),
   };
 
+  // Status summary counts (always unfiltered by status, preserves q filter)
+  const qWhere: Prisma.OrderWhereInput = q
+    ? {
+        OR: [
+          { orderNumber: { contains: q, mode: "insensitive" } },
+          { user: { name: { contains: q, mode: "insensitive" } } },
+          { user: { email: { contains: q, mode: "insensitive" } } },
+        ],
+      }
+    : {};
+
+  const statusCounts = await prisma.order.groupBy({
+    by: ["status"],
+    where: qWhere,
+    _count: { _all: true },
+  });
+
+  const countByStatus = Object.fromEntries(
+    statusCounts.map((r) => [r.status, r._count._all]),
+  ) as Partial<Record<OrderStatus, number>>;
+
+  const totalAllStatuses = Object.values(countByStatus).reduce(
+    (s, n) => s + (n ?? 0),
+    0,
+  );
+
   const total = await prisma.order.count({ where });
   const totalPages = pageCount(total, PAGE_SIZE);
   const page = Math.min(requestedPage, totalPages);
@@ -65,9 +100,60 @@ export default async function AdminOrdersPage({
     take: PAGE_SIZE,
   });
 
+  /** Build URL preserving q + sort but setting/clearing status */
+  function cardHref(s: string) {
+    const p = new URLSearchParams();
+    if (q) p.set("q", q);
+    if (sort && sort !== "newest") p.set("sort", sort);
+    if (s) p.set("status", s);
+    const qs = p.toString();
+    return `/admin/orders${qs ? `?${qs}` : ""}`;
+  }
+
   return (
     <div>
       <h1 className="mb-4 text-xl font-semibold">Order requests</h1>
+
+      {/* Status summary cards */}
+      <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
+        {/* All card */}
+        <Link
+          href={cardHref("")}
+          className={`flex shrink-0 flex-col rounded-xl border px-4 py-3 text-sm shadow-sm transition-colors ${
+            status === ""
+              ? "border-brand bg-brand text-white"
+              : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:shadow"
+          }`}
+        >
+          <span className="text-xs font-medium opacity-80">All</span>
+          <span className="mt-0.5 text-xl font-bold">{totalAllStatuses}</span>
+        </Link>
+        {STATUS_ORDER.map((s) => {
+          const count = countByStatus[s] ?? 0;
+          const isActive = status === s;
+          const dotColor = dotColorFromBg(STATUS_COLORS[s]);
+          return (
+            <Link
+              key={s}
+              href={cardHref(s)}
+              className={`flex shrink-0 flex-col rounded-xl border px-4 py-3 text-sm shadow-sm transition-colors ${
+                isActive
+                  ? "border-brand bg-brand-tint"
+                  : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow"
+              }`}
+            >
+              <span className="flex items-center gap-1.5 text-xs font-medium text-zinc-600">
+                <span className={`h-2 w-2 rounded-full ${dotColor}`} aria-hidden="true" />
+                {STATUS_LABELS[s]}
+              </span>
+              <span className={`mt-0.5 text-xl font-bold ${isActive ? "text-brand" : "text-zinc-900"}`}>
+                {count}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+
       <Form
         action="/admin/orders"
         className="mb-4 grid gap-2 text-sm sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_auto_auto_auto]"
@@ -143,42 +229,42 @@ export default async function AdminOrdersPage({
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white px-4 shadow-sm md:block">
+          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm md:block">
             <table className="w-full min-w-3xl text-sm">
-              <thead className="text-left text-zinc-500">
+              <thead className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
                 <tr>
-                  <th scope="col" className="py-3 pr-3">Order</th>
+                  <th scope="col" className="py-3 pl-4 pr-3">Order</th>
                   <th scope="col" className="px-3">Worker</th>
                   <th scope="col" className="px-3">Status</th>
                   <th scope="col" className="px-3">Date</th>
-                  <th scope="col" className="py-3 pl-3 text-right">Total</th>
+                  <th scope="col" className="py-3 pl-3 pr-4 text-right">Total</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-zinc-100">
                 {orders.map((order) => (
                   <tr
                     key={order.id}
                     data-testid="admin-order-row"
-                    className="border-t border-zinc-200 transition hover:bg-zinc-50"
+                    className="transition hover:bg-zinc-50"
                   >
-                    <td className="py-3 pr-3">
+                    <td className="py-3 pl-4 pr-3">
                       <Link
                         href={`/admin/orders/${order.orderNumber}`}
-                        className="font-medium text-blue-700 underline decoration-blue-200 underline-offset-2"
+                        className="font-medium text-brand underline decoration-brand/30 underline-offset-2 hover:text-brand-hover"
                       >
                         {order.orderNumber}
                       </Link>
                     </td>
-                    <td className="px-3">{order.user.name}</td>
+                    <td className="px-3 text-zinc-700">{order.user.name}</td>
                     <td className="px-3">
                       <StatusBadge status={order.status} />
                     </td>
-                    <td className="px-3">
+                    <td className="px-3 text-zinc-500">
                       {order.createdAt.toLocaleDateString("en-AU", {
                         timeZone: "Australia/Sydney",
                       })}
                     </td>
-                    <td className="py-3 pl-3 text-right">
+                    <td className="py-3 pl-3 pr-4 text-right font-medium">
                       {formatAud(order.totalCents)}
                     </td>
                   </tr>

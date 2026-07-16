@@ -23,7 +23,7 @@ test("SM-03 + SM-04 + SM-05: list, detail, status update and note", async ({
   await expect(page.getByTestId("admin-order-row").first()).toBeVisible();
   await page.getByTestId("admin-order-row").first().locator("a").click();
   await expect(page.locator("body")).toContainText("@example.com");
-  await page.getByTestId("status-select").selectOption("CONTACTED");
+  await page.getByTestId("status-select").getByRole("radio", { name: "Contacted" }).click();
   await page.getByTestId("status-note").fill("Called worker");
   await page.getByTestId("save-status").click();
   await expect(page.getByTestId("status-timeline")).toContainText("Contacted");

@@ -54,31 +54,35 @@ export default async function ImportsPage() {
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white px-4 shadow-sm md:block">
+          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm md:block">
             <table className="w-full min-w-4xl text-sm">
-              <thead className="text-left text-zinc-500">
+              <thead className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
                 <tr>
-                  <th scope="col" className="py-3 pr-3">Started</th>
+                  <th scope="col" className="py-3 pl-4 pr-3">Started</th>
                   <th scope="col" className="px-3">Status</th>
                   <th scope="col" className="px-3">Added</th>
                   <th scope="col" className="px-3">Updated</th>
                   <th scope="col" className="px-3">Deactivated</th>
-                  <th scope="col" className="py-3 pl-3">Error</th>
+                  <th scope="col" className="py-3 pl-3 pr-4">Error</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-zinc-100">
                 {runs.map((run) => (
-                  <tr key={run.id} data-testid="import-row" className="border-t border-zinc-200">
-                    <td className="py-3 pr-3">
+                  <tr key={run.id} data-testid="import-row" className="transition hover:bg-zinc-50">
+                    <td className="py-3 pl-4 pr-3 text-zinc-700">
                       {run.startedAt.toLocaleString("en-AU", {
                         timeZone: "Australia/Sydney",
                       })}
                     </td>
-                    <td className="px-3">{run.status}</td>
-                    <td className="px-3">{run.added}</td>
-                    <td className="px-3">{run.updated}</td>
-                    <td className="px-3">{run.deactivated}</td>
-                    <td className="max-w-sm break-words py-3 pl-3 text-red-600">
+                    <td className="px-3">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${run.status === "SUCCEEDED" ? "bg-emerald-100 text-emerald-800" : run.status === "FAILED" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>
+                        {run.status}
+                      </span>
+                    </td>
+                    <td className="px-3 font-medium">{run.added}</td>
+                    <td className="px-3 font-medium">{run.updated}</td>
+                    <td className="px-3 font-medium">{run.deactivated}</td>
+                    <td className="max-w-sm break-words py-3 pl-3 pr-4 text-red-600">
                       {run.errorMessage ?? ""}
                     </td>
                   </tr>

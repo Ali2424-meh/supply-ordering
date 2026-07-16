@@ -14,7 +14,7 @@ test("A-02: admin can update an order status", async ({ page }) => {
   await login(page, "admin@example.com");
   await page.goto("/admin/orders");
   await page.getByTestId("admin-order-row").first().locator("a").click();
-  await page.getByTestId("status-select").selectOption("PAID");
+  await page.getByTestId("status-select").getByRole("radio", { name: "Paid" }).click();
   await page.getByTestId("save-status").click();
   await expect(page.getByTestId("status-timeline")).toContainText("Paid");
 });

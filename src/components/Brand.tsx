@@ -6,6 +6,8 @@ interface BrandProps {
   variant?: BrandVariant;
   /** Override size in px — if provided, overrides variant sizing */
   size?: number;
+  /** Use white wordmark (for dark backgrounds) */
+  onDark?: boolean;
 }
 
 const variantConfig: Record<BrandVariant, { iconSize: number; textClass: string; squareClass: string }> = {
@@ -21,9 +23,10 @@ const variantConfig: Record<BrandVariant, { iconSize: number; textClass: string;
   },
 };
 
-export function Brand({ variant = "header", size }: BrandProps) {
+export function Brand({ variant = "header", size, onDark = false }: BrandProps) {
   const config = variantConfig[variant];
   const iconSize = size ?? config.iconSize;
+  const wordmarkColor = onDark ? "text-white" : "text-brand";
 
   return (
     <span className="flex items-center gap-2 select-none">
@@ -32,7 +35,7 @@ export function Brand({ variant = "header", size }: BrandProps) {
       >
         <Package size={iconSize} strokeWidth={2} aria-hidden="true" />
       </span>
-      <span className={`${config.textClass} text-brand`}>SupplyHub</span>
+      <span className={`${config.textClass} ${wordmarkColor}`}>SupplyHub</span>
     </span>
   );
 }

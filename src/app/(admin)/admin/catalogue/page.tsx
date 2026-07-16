@@ -165,46 +165,46 @@ export default async function AdminCataloguePage({
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white px-4 shadow-sm md:block">
+          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm md:block">
             <table className="w-full min-w-4xl text-sm">
-              <thead className="text-left text-zinc-500">
+              <thead className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
                 <tr>
-                  <th scope="col" className="py-3 pr-3">Name</th>
+                  <th scope="col" className="py-3 pl-4 pr-3">Name</th>
                   <th scope="col" className="px-3">Variant</th>
                   <th scope="col" className="px-3">Category</th>
                   <th scope="col" className="px-3">Source</th>
                   <th scope="col" className="px-3">State</th>
-                  <th scope="col" className="py-3 pl-3 text-right">Price</th>
+                  <th scope="col" className="py-3 pl-3 pr-4 text-right">Price</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-zinc-100">
                 {products.map((product) => (
                   <tr
                     key={product.id}
                     data-testid="admin-product-row"
-                    className="border-t border-zinc-200 transition hover:bg-zinc-50"
+                    className="transition hover:bg-zinc-50"
                   >
-                    <td className="py-3 pr-3">
+                    <td className="py-3 pl-4 pr-3">
                       <Link
                         href={`/admin/catalogue/${product.id}/edit`}
-                        className="font-medium text-blue-700 underline decoration-blue-200 underline-offset-2"
+                        className="font-medium text-brand underline decoration-brand/30 underline-offset-2 hover:text-brand-hover"
                       >
                         {product.name}
                       </Link>
                     </td>
-                    <td className="px-3">{product.variantName ?? "—"}</td>
-                    <td className="px-3">{product.category ?? "—"}</td>
-                    <td className="px-3">
+                    <td className="px-3 text-zinc-600">{product.variantName ?? "—"}</td>
+                    <td className="px-3 text-zinc-600">{product.category ?? "—"}</td>
+                    <td className="px-3 text-zinc-600">
                       {product.source === "SYNCED" ? "Synced" : "Manual"}
                     </td>
                     <td className="px-3">
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs ${product.active ? "bg-emerald-100 text-emerald-800" : "bg-zinc-200 text-zinc-600"}`}
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${product.active ? "bg-emerald-100 text-emerald-800" : "bg-zinc-200 text-zinc-600"}`}
                       >
                         {product.active ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td className="py-3 pl-3 text-right">
+                    <td className="py-3 pl-3 pr-4 text-right font-medium">
                       {formatAud(product.priceCents)}
                     </td>
                   </tr>
