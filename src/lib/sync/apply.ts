@@ -1,5 +1,22 @@
 import { prisma } from "@/lib/prisma";
+import type { Product } from "@prisma/client";
 import type { CatalogueLine } from "./shopify";
+
+function catalogueChanged(product: Product, line: CatalogueLine): boolean {
+  return (
+    !product.active ||
+    product.source !== "SYNCED" ||
+    product.name !== line.name ||
+    product.variantName !== line.variantName ||
+    product.category !== line.category ||
+    product.description !== line.description ||
+    product.imageUrl !== line.imageUrl ||
+    product.priceCents !== line.priceCents ||
+    product.sku !== line.sku ||
+    product.unitSize !== line.unitSize ||
+    product.productUrl !== line.productUrl
+  );
+}
 
 export async function applyCatalogueLines(
   lines: CatalogueLine[],
@@ -8,25 +25,35 @@ export async function applyCatalogueLines(
     async (tx) => {
       let added = 0;
       let updated = 0;
-      const seen: string[] = [];
+      const uniqueLines = [
+        ...new Map(
+          lines.map((line) => [line.shopifyVariantId, line] as const),
+        ).values(),
+      ];
+      const seen = uniqueLines.map((line) => line.shopifyVariantId);
+      const existingProducts = await tx.product.findMany({
+        where: { shopifyVariantId: { in: seen } },
+      });
+      const existingByVariant = new Map(
+        existingProducts.map((product) => [product.shopifyVariantId!, product]),
+      );
 
-      for (const line of lines) {
-        seen.push(line.shopifyVariantId);
-        const existing = await tx.product.findUnique({
-          where: { shopifyVariantId: line.shopifyVariantId },
-        });
+      for (const line of uniqueLines) {
+        const existing = existingByVariant.get(line.shopifyVariantId);
         if (!existing) {
-          const created = await tx.product.create({
-            data: { ...line, active: true, source: "SYNCED" },
-          });
-          await tx.priceHistory.create({
-            data: { productId: created.id, priceCents: line.priceCents },
+          await tx.product.create({
+            data: {
+              ...line,
+              active: true,
+              source: "SYNCED",
+              priceHistory: { create: { priceCents: line.priceCents } },
+            },
           });
           added += 1;
-        } else {
+        } else if (catalogueChanged(existing, line)) {
           await tx.product.update({
             where: { id: existing.id },
-            data: { ...line, active: true },
+            data: { ...line, active: true, source: "SYNCED" },
           });
           if (existing.priceCents !== line.priceCents) {
             await tx.priceHistory.create({

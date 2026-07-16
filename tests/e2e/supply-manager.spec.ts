@@ -35,6 +35,7 @@ test("SM-06: submitted order produces a captured email", async ({ page }) => {
   await page.goto("/supplies/catalogue");
   await page.getByTestId("product-card").first().click();
   await page.getByTestId("add-to-cart").click();
+  await expect(page.getByLabel("Cart, 1 items")).toBeVisible();
   await page.goto("/supplies/cart");
   await page.getByTestId("submit-order").click();
   await expect(page.getByTestId("order-number")).toBeVisible();
@@ -59,12 +60,13 @@ test("SM-07 + SM-08 + SM-09 + SM-10: manage product lifecycle", async ({
   await page.fill('input[name="name"]', "Test Bucket");
   await page.fill('input[name="price"]', "12.50");
   await page.getByRole("button", { name: "Save product" }).click();
-  await expect(page.locator("body")).toContainText("Test Bucket");
-  await page.getByRole("link", { name: "Test Bucket" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Edit Test Bucket" }),
+  ).toBeVisible();
   await page.fill('input[name="price"]', "13.00");
   await page.getByRole("button", { name: "Save product" }).click();
   await expect(page.locator("body")).toContainText("$13.00");
-  await page.getByRole("link", { name: "Test Bucket" }).click();
+  await page.locator("a:visible").filter({ hasText: "Test Bucket" }).click();
   await page.uncheck('input[name="active"]');
   await page.getByRole("button", { name: "Save product" }).click();
   await page.context().clearCookies();

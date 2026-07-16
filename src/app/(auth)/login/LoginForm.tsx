@@ -7,20 +7,27 @@ export function LoginForm() {
   const [state, action, pending] = useActionState(loginAction, {});
   return (
     <form action={action} className="flex flex-col gap-3">
-      <input
-        name="email"
-        type="email"
-        required
-        placeholder="Email"
-        className="rounded border p-2"
-      />
-      <input
-        name="password"
-        type="password"
-        required
-        placeholder="Password"
-        className="rounded border p-2"
-      />
+      <label className="grid gap-1.5 text-sm font-medium">
+        Email
+        <input
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          placeholder="you@example.com"
+          className="min-h-11 rounded-lg border border-zinc-300 bg-white p-2.5 font-normal shadow-sm"
+        />
+      </label>
+      <label className="grid gap-1.5 text-sm font-medium">
+        Password
+        <input
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          required
+          className="min-h-11 rounded-lg border border-zinc-300 bg-white p-2.5 font-normal shadow-sm"
+        />
+      </label>
       {state.error && (
         <p role="alert" className="text-sm text-red-600">
           {state.error}
@@ -28,7 +35,7 @@ export function LoginForm() {
       )}
       <button
         disabled={pending}
-        className="rounded bg-zinc-900 p-2 text-white disabled:opacity-50"
+        className="mt-1 min-h-11 rounded-lg bg-zinc-900 p-2 font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:opacity-50"
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>

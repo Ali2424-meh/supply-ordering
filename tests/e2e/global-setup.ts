@@ -16,9 +16,6 @@ export default async function globalSetup() {
     const cleaner = await db.user.findUniqueOrThrow({
       where: { email: "cleaner@example.com" },
     });
-    const disabled = await db.user.findUniqueOrThrow({
-      where: { email: "disabled@example.com" },
-    });
     const product = await db.product.findUniqueOrThrow({
       where: { shopifyVariantId: "seed-1" },
     });
@@ -42,9 +39,6 @@ export default async function globalSetup() {
           create: { toStatus: "SUBMITTED", actorId: cleaner.id },
         },
       },
-    });
-    await db.cartItem.create({
-      data: { userId: disabled.id, productId: product.id, quantity: 1 },
     });
   } finally {
     await db.$disconnect();

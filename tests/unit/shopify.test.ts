@@ -31,7 +31,8 @@ describe("mapProductsPage (S-01 basis)", () => {
       shopifyVariantId: "1001", name: "Glass Cleaner", variantName: "5L",
       category: "Chemicals", description: "Streak-free glass cleaner.",
       imageUrl: "https://cdn.shopify.com/glass.jpg", priceCents: 1895,
-      sku: "GC-5L", productUrl: "https://cleanersgallery.com.au/products/glass-cleaner",
+      sku: "GC-5L", unitSize: "5L",
+      productUrl: "https://cleanersgallery.com.au/products/glass-cleaner",
     });
   });
   test("'Default Title' variant, empty sku/type/images map to nulls", () => {
@@ -40,10 +41,24 @@ describe("mapProductsPage (S-01 basis)", () => {
     expect(mop.sku).toBeNull();
     expect(mop.category).toBeNull();
     expect(mop.imageUrl).toBeNull();
+    expect(mop.unitSize).toBeNull();
     expect(mop.priceCents).toBe(3450);
   });
   test("rejects malformed payloads", () => {
     expect(() => mapProductsPage({ nope: true }, "x")).toThrow();
+  });
+
+  test("decodes descriptions and normalizes a trailing base URL slash", () => {
+    const custom = structuredClone(page);
+    custom.products[0].body_html = "<p>Fast &amp; safe&nbsp;cleaning.</p>";
+    const [mapped] = mapProductsPage(
+      custom,
+      "https://cleanersgallery.com.au/",
+    );
+    expect(mapped.description).toBe("Fast & safe cleaning.");
+    expect(mapped.productUrl).toBe(
+      "https://cleanersgallery.com.au/products/glass-cleaner",
+    );
   });
 });
 

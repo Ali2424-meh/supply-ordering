@@ -1,16 +1,22 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { SubmittedCheck } from "@/components/SubmittedCheck";
 import { requireRole } from "@/lib/guards";
+import { prisma } from "@/lib/prisma";
 
 export default async function SubmittedPage({
   searchParams,
 }: {
   searchParams: Promise<{ orderNumber?: string }>;
 }) {
-  await requireRole("CLEANER");
+  const user = await requireRole("CLEANER");
   const { orderNumber } = await searchParams;
   if (!orderNumber) redirect("/supplies");
+  const ownedOrder = await prisma.order.findFirst({
+    where: { orderNumber, userId: user.id },
+    select: { id: true },
+  });
+  if (!ownedOrder) notFound();
   return (
     <div>
       <SubmittedCheck orderNumber={orderNumber} />

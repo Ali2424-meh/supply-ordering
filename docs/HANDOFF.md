@@ -29,8 +29,9 @@ marked complete below.
 - Seeded logins (all password `password123`): cleaner@example.com,
   cleaner2@example.com, disabled@example.com (disabled), supply@example.com,
   admin@example.com, manager@example.com, customer@example.com.
-- **Prisma is pinned to v6.x** — v7 requires `prisma.config.js` and breaks the
-  schema's inline datasource URL. Do not upgrade without migrating config.
+- **Prisma is pinned to v6.x** — seed/migration settings have been moved to
+  `prisma.config.ts`, but v7 also requires moving the schema's inline
+  datasource URL. Do not upgrade without completing that migration.
 
 ## Task progress
 
@@ -57,15 +58,52 @@ marked complete below.
 | 19. Playwright E2E suite | ✅ complete | cbf2fdb | isolated reset/seeded DB, managed store + email fixtures, C/SM/A/M/U/S scenarios and mobile overflow smoke; 19 E2E tests pass |
 | 20. Full verification sweep | ✅ complete | 40c7b14 | `npm run check` green: lint, typecheck, 17 unit, 28 integration, 19 E2E; production build green; live sync added 4,225 variants and cleaner category filter smoke passed |
 
+## Post-completion hardening (2026-07-17)
+
+- **Authorization and privacy:** role guards now reload the current user from
+  the database; disabled users cannot authenticate; Server Actions use a fresh
+  authorization read; submission confirmation validates order ownership.
+- **Order integrity:** cart mutations share the submission user lock, product
+  rows are locked while an order snapshot is made, and excessive totals are
+  rejected before they can overflow PostgreSQL `Int` columns.
+- **Input safety:** product fields and internal notes have bounded lengths;
+  manually entered product/image links accept HTTP(S) only.
+- **Catalogue correctness and sync:** Shopify option data populates unit size,
+  descriptions decode HTML entities, duplicate variant payloads are collapsed,
+  unchanged records are not rewritten, and sync counts now reflect real
+  changes. A repeated live refresh reported `added 0, updated 0, deactivated 0`.
+- **Performance:** cleaner catalogue is limited to 48 cards/page, admin lists
+  to 50 rows/page, cleaner order history to 20 cards/page, queries select only
+  needed fields, and common filters/sorts have database indexes. With 4,225
+  live variants, the cleaner catalogue dropped from 4,225 cards/~28,030 DOM
+  nodes/~22.9s to 48 cards/434 DOM nodes/~1.6s; admin catalogue dropped from
+  4,227 rows/~39,152 nodes/~4.6s to 50 rows/1,077 nodes/~0.94s.
+- **UI and accessibility:** products are explicitly grouped by category;
+  responsive mobile cards replace oversized admin tables; category filters
+  horizontally scroll on small screens; active navigation, labels, focus
+  states, image fallbacks, error feedback, page titles, and empty/pending states
+  were improved. Planned Motion animations remain, with reduced-motion support.
+- **Tooling:** Prisma configuration no longer uses the deprecated
+  `package.json#prisma` key.
+- **Verification:** lint, typecheck, Prisma validation, 21 unit tests, 33
+  integration tests, 19 Playwright browser tests, and the optimized production
+  build pass.
+
 ## Deferred minor findings (triage at final review)
 
 - `OrderItem.productId` deliberately has no FK constraint (snapshot design) —
   application code must not write dangling ids (Task 2 review, design note).
+- `npm audit` reports three moderate findings through Next 16.2.10's vendored
+  PostCSS 8.4.31. The Next.js maintainer states this is build-time only and does
+  not affect Next.js users; `npm audit fix --force` proposes an unsafe downgrade
+  to Next 9, so no forced override or downgrade was applied. Track the upstream
+  Next.js stable dependency update.
 
 ## Final review status
 
-- Local diff/spec review found no remaining blocking or important issue.
-- Claude Code independent review was attempted again after the final build, but
-  the CLI remained capped until 2am Asia/Manila. It did not review or approve
-  the final changes; rerun it after the cap resets if an additional opinion is
-  desired.
+- Local diff/spec review found no remaining blocking or important issue after
+  the post-completion hardening pass.
+- Claude Code independent review was attempted again after the hardening build
+  and aggregate test pass (2026-07-17, before 2am Asia/Manila), but the CLI
+  remained session-capped until 2am. It did not review or approve the final
+  changes; rerun it after the cap resets if an additional opinion is desired.

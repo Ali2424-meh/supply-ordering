@@ -8,7 +8,7 @@ test("C-01: cleaner with feature enabled sees Supplies", async ({ page }) => {
   await setFeature(page, true);
   await login(page, "cleaner@example.com");
   await expect(page).toHaveURL(/\/supplies/);
-  await expect(page.locator("nav")).toContainText("Supplies");
+  await expect(page.locator("header nav")).toContainText("Supplies");
 });
 
 test("C-02: feature disabled hides Supplies", async ({ page }) => {
@@ -53,6 +53,7 @@ test("C-05 + C-10: cart persists across navigation and submits", async ({
   await page.goto("/supplies/catalogue");
   await page.getByTestId("product-card").first().click();
   await page.getByTestId("add-to-cart").click();
+  await expect(page.getByLabel("Cart, 1 items")).toBeVisible();
   await page.goto("/supplies/catalogue");
   await page.goto("/supplies/cart");
   await expect(page.getByTestId("cart-line")).toHaveCount(1);
@@ -94,14 +95,14 @@ test("C-07 + C-08: own orders only; detail is read-only", async ({ page }) => {
   await login(page, "cleaner2@example.com");
   await page.goto("/supplies");
   await expect(page.getByTestId("order-card")).toHaveCount(0);
+  await page.goto("/supplies/cart/submitted?orderNumber=OR-SEED");
+  await expect(page.locator("body")).toContainText(/not.*found|404/i);
 });
 
 test("C-09: disabled cleaner cannot submit", async ({ page }) => {
   await login(page, "disabled@example.com");
+  await expect(page).toHaveURL(/\/login/);
   await page.goto("/supplies/cart");
-  await expect(page.getByTestId("cart-line")).toHaveCount(1);
-  await page.getByTestId("submit-order").click();
-  await expect(
-    page.getByRole("alert").filter({ hasText: /disabled/i }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.getByTestId("submit-order")).toHaveCount(0);
 });

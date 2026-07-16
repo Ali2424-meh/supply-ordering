@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import { CartView } from "@/components/CartView";
 import { EmptyState } from "@/components/EmptyState";
 import { requireRole } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
+
+export const metadata: Metadata = { title: "Cart" };
 
 export default async function CartPage() {
   const user = await requireRole("CLEANER");

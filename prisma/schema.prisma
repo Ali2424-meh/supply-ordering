@@ -73,6 +73,9 @@ model Product {
   shopifyVariantId String?        @unique
   priceHistory     PriceHistory[]
   cartItems        CartItem[]
+
+  @@index([active, category, name])
+  @@index([name])
 }
 
 model PriceHistory {
@@ -81,6 +84,8 @@ model PriceHistory {
   product    Product  @relation(fields: [productId], references: [id])
   priceCents Int
   recordedAt DateTime @default(now())
+
+  @@index([productId, recordedAt])
 }
 
 model CartItem {
@@ -103,6 +108,10 @@ model Order {
   createdAt   DateTime     @default(now())
   items       OrderItem[]
   events      OrderEvent[]
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([createdAt])
 }
 
 model OrderItem {
@@ -114,6 +123,8 @@ model OrderItem {
   variantSnapshot    String?
   priceCentsSnapshot Int
   quantity           Int
+
+  @@index([orderId])
 }
 
 model OrderEvent {
@@ -125,6 +136,8 @@ model OrderEvent {
   note       String?
   actorId    String?
   createdAt  DateTime     @default(now())
+
+  @@index([orderId, createdAt])
 }
 
 model ImportRun {
@@ -136,6 +149,8 @@ model ImportRun {
   updated      Int          @default(0)
   deactivated  Int          @default(0)
   errorMessage String?
+
+  @@index([startedAt])
 }
 
 model AuditEvent {
@@ -146,6 +161,8 @@ model AuditEvent {
   action    AuditAction
   details   Json?
   createdAt DateTime    @default(now())
+
+  @@index([entity, entityId, createdAt])
 }
 
 model Setting {

@@ -3,7 +3,8 @@ import { z } from "zod";
 export type CatalogueLine = {
   shopifyVariantId: string; name: string; variantName: string | null;
   category: string | null; description: string | null; imageUrl: string | null;
-  priceCents: number; sku: string | null; productUrl: string;
+  priceCents: number; sku: string | null; unitSize: string | null;
+  productUrl: string;
 };
 
 export function parsePriceToCents(price: string): number {
@@ -21,22 +22,72 @@ export const shopifyPageSchema = z.object({
     handle: z.string(),
     body_html: z.string().nullish(),
     product_type: z.string().nullish(),
+    options: z.array(z.object({
+      name: z.string(),
+      position: z.number().int().min(1).max(3),
+    })).optional(),
     variants: z.array(z.object({
       id: z.number(),
       title: z.string(),
       price: z.string(),
       sku: z.string().nullish(),
+      option1: z.string().nullish().optional(),
+      option2: z.string().nullish().optional(),
+      option3: z.string().nullish().optional(),
     })),
     images: z.array(z.object({ src: z.string() })).nullish(),
   })),
 });
 
+function decodeHtmlEntities(text: string): string {
+  const named: Record<string, string> = {
+    amp: "&",
+    apos: "'",
+    gt: ">",
+    lt: "<",
+    nbsp: " ",
+    quot: '"',
+  };
+  return text.replace(
+    /&(#(?:x[0-9a-f]+|\d+)|amp|apos|gt|lt|nbsp|quot);/gi,
+    (entity, code: string) => {
+      if (!code.startsWith("#")) return named[code.toLowerCase()] ?? entity;
+      const hex = code[1]?.toLowerCase() === "x";
+      const value = Number.parseInt(code.slice(hex ? 2 : 1), hex ? 16 : 10);
+      return Number.isFinite(value) && value >= 0 && value <= 0x10ffff
+        ? String.fromCodePoint(value)
+        : entity;
+    },
+  );
+}
+
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return decodeHtmlEntities(
+    html
+      .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
+      .replace(/<[^>]*>/g, " "),
+  )
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function unitSizeFor(
+  options: Array<{ name: string; position: number }>,
+  variant: { option1?: string | null; option2?: string | null; option3?: string | null },
+): string | null {
+  const option = options.find(({ name }) =>
+    /size|volume|weight|pack|quantity|qty|capacity/i.test(name),
+  );
+  if (!option) return null;
+  const value = [variant.option1, variant.option2, variant.option3][
+    option.position - 1
+  ];
+  return value && value !== "Default Title" ? value : null;
 }
 
 export function mapProductsPage(page: unknown, baseUrl: string): CatalogueLine[] {
   const parsed = shopifyPageSchema.parse(page);
+  const origin = baseUrl.replace(/\/+$/, "");
   return parsed.products.flatMap((p) =>
     p.variants.map((v) => ({
       shopifyVariantId: String(v.id),
@@ -47,7 +98,8 @@ export function mapProductsPage(page: unknown, baseUrl: string): CatalogueLine[]
       imageUrl: p.images?.[0]?.src ?? null,
       priceCents: parsePriceToCents(v.price),
       sku: v.sku || null,
-      productUrl: `${baseUrl}/products/${p.handle}`,
+      unitSize: unitSizeFor(p.options ?? [], v),
+      productUrl: `${origin}/products/${p.handle}`,
     })),
   );
 }

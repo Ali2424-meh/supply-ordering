@@ -28,8 +28,13 @@ export function CartView({ lines }: { lines: Line[] }) {
 
   const act = (action: () => Promise<unknown>) =>
     startTransition(async () => {
-      await action();
-      router.refresh();
+      setError(null);
+      try {
+        await action();
+        router.refresh();
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : "Cart update failed.");
+      }
     });
 
   function submit() {
@@ -78,6 +83,10 @@ export function CartView({ lines }: { lines: Line[] }) {
               <img
                 src={line.imageUrl ?? "/placeholder.svg"}
                 alt=""
+                loading="lazy"
+                onError={(event) => {
+                  event.currentTarget.src = "/placeholder.svg";
+                }}
                 className="h-12 w-12 rounded bg-zinc-100 object-cover"
               />
               <div className="min-w-0">

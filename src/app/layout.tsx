@@ -14,7 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Supply Ordering",
+  title: {
+    default: "Supply Ordering",
+    template: "%s | Supply Ordering",
+  },
   description: "Supply ordering for field workers and operations staff",
 };
 

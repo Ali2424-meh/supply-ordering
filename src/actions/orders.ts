@@ -7,13 +7,15 @@ import { sendOrderSubmittedEmail } from "@/lib/email/send";
 import { formatOrderNumber } from "@/lib/format";
 import { guardAction } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
-import { OrderStatus, type Role } from "@prisma/client";
+import { OrderStatus, Prisma, type Role } from "@prisma/client";
 
 export type SubmitResult =
   | { ok: true; orderNumber: string }
   | { ok: false; error: string; invalidProductIds?: string[] };
 
 const statusSchema = z.nativeEnum(OrderStatus);
+const noteSchema = z.string().trim().max(2_000, "Notes must be 2,000 characters or fewer.");
+const MAX_DATABASE_INT = 2_147_483_647;
 
 export async function submitOrder(): Promise<SubmitResult> {
   const user = await guardAction(["CLEANER"]);
@@ -37,13 +39,25 @@ export async function submitOrder(): Promise<SubmitResult> {
       throw new Error("Supply ordering is currently disabled.");
     }
 
+    const cartLines = await tx.cartItem.findMany({
+      where: { userId: user.id },
+      select: { productId: true },
+    });
+    if (cartLines.length === 0) {
+      return { ok: false as const, error: "Your cart is empty." };
+    }
+
+    // Hold shared locks until the order commits so catalogue sync cannot
+    // deactivate or reprice a line between validation and snapshot creation.
+    await tx.$queryRaw`
+      SELECT "id" FROM "Product"
+      WHERE "id" IN (${Prisma.join(cartLines.map((item) => item.productId))})
+      FOR SHARE
+    `;
     const cart = await tx.cartItem.findMany({
       where: { userId: user.id },
       include: { product: true },
     });
-    if (cart.length === 0) {
-      return { ok: false as const, error: "Your cart is empty." };
-    }
 
     const invalid = findInvalidLines(
       cart.map((item) => ({ productId: item.productId })),
@@ -72,6 +86,12 @@ export async function submitOrder(): Promise<SubmitResult> {
         priceCents: item.product.priceCents,
       })),
     );
+    if (totalCents > MAX_DATABASE_INT) {
+      return {
+        ok: false as const,
+        error: "Your cart total is too large. Please reduce the quantities.",
+      };
+    }
 
     await tx.order.create({
       data: {
@@ -131,7 +151,7 @@ export async function updateOrderStatus(
 ): Promise<void> {
   const actor = await guardAction(["SUPPLY_MANAGER", "ADMIN"]);
   const target = statusSchema.parse(toStatus);
-  const trimmedNote = note?.trim() || null;
+  const trimmedNote = note == null ? null : noteSchema.parse(note) || null;
 
   await prisma.$transaction(async (tx) => {
     const [order] = await tx.$queryRaw<

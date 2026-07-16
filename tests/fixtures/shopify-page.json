@@ -3,16 +3,18 @@
     {
       "id": 111, "title": "Glass Cleaner", "handle": "glass-cleaner",
       "body_html": "<p>Streak-free glass cleaner.</p>", "product_type": "Chemicals",
+      "options": [{ "name": "Volume", "position": 1 }],
       "variants": [
-        { "id": 1001, "title": "5L", "price": "18.95", "sku": "GC-5L" },
-        { "id": 1002, "title": "20L", "price": "59.00", "sku": "GC-20L" }
+        { "id": 1001, "title": "5L", "price": "18.95", "sku": "GC-5L", "option1": "5L" },
+        { "id": 1002, "title": "20L", "price": "59.00", "sku": "GC-20L", "option1": "20L" }
       ],
       "images": [{ "src": "https://cdn.shopify.com/glass.jpg" }]
     },
     {
       "id": 222, "title": "Pro Mop", "handle": "pro-mop",
       "body_html": "", "product_type": "",
-      "variants": [{ "id": 2001, "title": "Default Title", "price": "34.50", "sku": "" }],
+      "options": [{ "name": "Title", "position": 1 }],
+      "variants": [{ "id": 2001, "title": "Default Title", "price": "34.50", "sku": "", "option1": "Default Title" }],
       "images": []
     }
   ]

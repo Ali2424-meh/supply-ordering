@@ -1,15 +1,16 @@
 import { redirect } from "next/navigation";
-import { auth, homeFor } from "@/lib/auth";
+import { homeFor } from "@/lib/auth";
+import { currentUser } from "@/lib/guards";
 
 export default async function Home() {
-  const session = await auth();
-  if (!session?.user) redirect("/login");
+  const user = await currentUser();
+  if (!user || user.disabled) redirect("/login");
   if (
-    session.user.role === "CLEANER" ||
-    session.user.role === "SUPPLY_MANAGER" ||
-    session.user.role === "ADMIN"
+    user.role === "CLEANER" ||
+    user.role === "SUPPLY_MANAGER" ||
+    user.role === "ADMIN"
   ) {
-    redirect(homeFor(session.user.role));
+    redirect(homeFor(user.role));
   }
   return (
     <main className="p-8">

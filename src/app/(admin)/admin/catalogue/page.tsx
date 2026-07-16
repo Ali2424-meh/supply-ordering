@@ -1,38 +1,77 @@
 import Form from "next/form";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { Prisma } from "@prisma/client";
 import { EmptyState } from "@/components/EmptyState";
+import { Pagination } from "@/components/Pagination";
 import { formatAud } from "@/lib/format";
 import { requireRole } from "@/lib/guards";
+import { pageCount, parsePage } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 import { supplyEnabled } from "@/lib/settings";
+
+const PAGE_SIZE = 50;
+
+export const metadata: Metadata = { title: "Manage products" };
 
 export default async function AdminCataloguePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; state?: string; sort?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    state?: string;
+    sort?: string;
+    page?: string;
+  }>;
 }) {
   await requireRole("SUPPLY_MANAGER", "ADMIN");
   if (!(await supplyEnabled())) notFound();
-  const { q = "", state = "", sort = "name" } = await searchParams;
-
-  const products = await prisma.product.findMany({
-    where: {
-      ...(q
-        ? { name: { contains: q, mode: "insensitive" as const } }
+  const params = await searchParams;
+  const q = (params.q ?? "").trim().slice(0, 200);
+  const state = params.state ?? "";
+  const sort = params.sort ?? "name";
+  const requestedPage = parsePage(params.page);
+  const where: Prisma.ProductWhereInput = {
+    ...(q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { variantName: { contains: q, mode: "insensitive" } },
+            { sku: { contains: q, mode: "insensitive" } },
+            { category: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+    ...(state === "active"
+      ? { active: true }
+      : state === "inactive"
+        ? { active: false }
         : {}),
-      ...(state === "active"
-        ? { active: true }
-        : state === "inactive"
-          ? { active: false }
-          : {}),
-    },
+  };
+
+  const total = await prisma.product.count({ where });
+  const totalPages = pageCount(total, PAGE_SIZE);
+  const page = Math.min(requestedPage, totalPages);
+  const products = await prisma.product.findMany({
+    where,
     orderBy:
       sort === "price"
-        ? { priceCents: "asc" }
+        ? [{ priceCents: "asc" }, { id: "asc" }]
         : sort === "category"
-          ? { category: "asc" }
-          : { name: "asc" },
+          ? [{ category: "asc" }, { name: "asc" }, { id: "asc" }]
+          : [{ name: "asc" }, { id: "asc" }],
+    skip: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
+    select: {
+      id: true,
+      name: true,
+      variantName: true,
+      category: true,
+      source: true,
+      active: true,
+      priceCents: true,
+    },
   });
 
   return (
@@ -41,7 +80,7 @@ export default async function AdminCataloguePage({
         <h1 className="text-xl font-semibold">Product catalogue</h1>
         <Link
           href="/admin/catalogue/new"
-          className="min-h-10 rounded bg-zinc-900 px-3 py-2 text-sm text-white"
+          className="min-h-10 rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white shadow-sm"
         >
           New product
         </Link>
@@ -50,84 +89,138 @@ export default async function AdminCataloguePage({
         action="/admin/catalogue"
         className="mb-4 grid gap-2 text-sm sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_auto_auto_auto]"
       >
-        <input
-          name="q"
-          defaultValue={q}
-          placeholder="Search products…"
-          className="min-h-10 rounded border p-2"
-        />
-        <select
-          name="state"
-          defaultValue={state}
-          className="min-h-10 rounded border p-2"
-        >
-          <option value="">All</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-        <select
-          name="sort"
-          defaultValue={sort}
-          className="min-h-10 rounded border p-2"
-        >
-          <option value="name">Name</option>
-          <option value="category">Category</option>
-          <option value="price">Price</option>
-        </select>
-        <button className="min-h-10 rounded bg-zinc-900 px-3 text-white">
+        <label>
+          <span className="sr-only">Search products</span>
+          <input
+            name="q"
+            defaultValue={q}
+            placeholder="Search name, variant, SKU or category…"
+            maxLength={200}
+            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+          />
+        </label>
+        <label>
+          <span className="sr-only">Product state</span>
+          <select
+            name="state"
+            defaultValue={state}
+            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+          >
+            <option value="">All states</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </label>
+        <label>
+          <span className="sr-only">Sort products</span>
+          <select
+            name="sort"
+            defaultValue={sort}
+            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+          >
+            <option value="name">Name</option>
+            <option value="category">Category</option>
+            <option value="price">Price</option>
+          </select>
+        </label>
+        <button className="min-h-10 rounded-lg bg-zinc-900 px-3 font-medium text-white shadow-sm">
           Apply
         </button>
       </Form>
       {products.length === 0 ? (
         <EmptyState title="No products found" />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-4xl text-sm">
-            <thead className="text-left text-zinc-500">
-              <tr>
-                <th className="py-2 pr-3">Name</th>
-                <th className="px-3">Variant</th>
-                <th className="px-3">Category</th>
-                <th className="px-3">Source</th>
-                <th className="px-3">State</th>
-                <th className="py-2 pl-3 text-right">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr
-                  key={product.id}
-                  data-testid="admin-product-row"
-                  className="border-t hover:bg-zinc-50"
+        <>
+          <ul className="grid gap-2 md:hidden">
+            {products.map((product) => (
+              <li key={product.id}>
+                <Link
+                  href={`/admin/catalogue/${product.id}/edit`}
+                  className="block rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:border-zinc-300 hover:shadow"
                 >
-                  <td className="py-3 pr-3">
-                    <Link
-                      href={`/admin/catalogue/${product.id}/edit`}
-                      className="font-medium text-blue-700 underline"
-                    >
-                      {product.name}
-                    </Link>
-                  </td>
-                  <td className="px-3">{product.variantName ?? "—"}</td>
-                  <td className="px-3">{product.category ?? "—"}</td>
-                  <td className="px-3">
-                    {product.source === "SYNCED" ? "Synced" : "Manual"}
-                  </td>
-                  <td className="px-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-zinc-900">{product.name}</p>
+                      <p className="mt-0.5 text-xs text-zinc-500">
+                        {[product.variantName, product.category]
+                          .filter(Boolean)
+                          .join(" · ") || "No variant or category"}
+                      </p>
+                    </div>
+                    <p className="shrink-0 text-sm font-semibold">
+                      {formatAud(product.priceCents)}
+                    </p>
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 text-xs">
                     <span
-                      className={`rounded-full px-2 py-0.5 text-xs ${product.active ? "bg-green-100 text-green-800" : "bg-zinc-200 text-zinc-600"}`}
+                      className={`rounded-full px-2 py-0.5 ${product.active ? "bg-emerald-100 text-emerald-800" : "bg-zinc-200 text-zinc-600"}`}
                     >
                       {product.active ? "Active" : "Inactive"}
                     </span>
-                  </td>
-                  <td className="py-3 pl-3 text-right">
-                    {formatAud(product.priceCents)}
-                  </td>
+                    <span className="text-zinc-500">
+                      {product.source === "SYNCED" ? "Synced" : "Manual"}
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white px-4 shadow-sm md:block">
+            <table className="w-full min-w-4xl text-sm">
+              <thead className="text-left text-zinc-500">
+                <tr>
+                  <th scope="col" className="py-3 pr-3">Name</th>
+                  <th scope="col" className="px-3">Variant</th>
+                  <th scope="col" className="px-3">Category</th>
+                  <th scope="col" className="px-3">Source</th>
+                  <th scope="col" className="px-3">State</th>
+                  <th scope="col" className="py-3 pl-3 text-right">Price</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr
+                    key={product.id}
+                    data-testid="admin-product-row"
+                    className="border-t border-zinc-200 transition hover:bg-zinc-50"
+                  >
+                    <td className="py-3 pr-3">
+                      <Link
+                        href={`/admin/catalogue/${product.id}/edit`}
+                        className="font-medium text-blue-700 underline decoration-blue-200 underline-offset-2"
+                      >
+                        {product.name}
+                      </Link>
+                    </td>
+                    <td className="px-3">{product.variantName ?? "—"}</td>
+                    <td className="px-3">{product.category ?? "—"}</td>
+                    <td className="px-3">
+                      {product.source === "SYNCED" ? "Synced" : "Manual"}
+                    </td>
+                    <td className="px-3">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs ${product.active ? "bg-emerald-100 text-emerald-800" : "bg-zinc-200 text-zinc-600"}`}
+                      >
+                        {product.active ? "Active" : "Inactive"}
+                      </span>
+                    </td>
+                    <td className="py-3 pl-3 text-right">
+                      {formatAud(product.priceCents)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination
+            pathname="/admin/catalogue"
+            query={{ q, state, sort }}
+            page={page}
+            totalPages={totalPages}
+            totalItems={total}
+            pageSize={PAGE_SIZE}
+          />
+        </>
       )}
     </div>
   );

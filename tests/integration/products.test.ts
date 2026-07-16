@@ -73,4 +73,12 @@ describe("product management", () => {
     asUser(supplyManager);
     await expect(createProduct({ ...base, name: " " })).rejects.toThrow();
   });
+
+  test("validation: unsafe product URLs are rejected server-side", async () => {
+    const supplyManager = await makeUser("SUPPLY_MANAGER");
+    asUser(supplyManager);
+    await expect(
+      createProduct({ ...base, productUrl: "javascript:alert(1)" }),
+    ).rejects.toThrow(/http or https/i);
+  });
 });

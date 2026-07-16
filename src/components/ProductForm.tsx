@@ -35,9 +35,13 @@ export function ProductForm({ productId, initial = {} }: Props) {
     }
     startTransition(async () => {
       try {
-        if (productId) await updateProduct(productId, parsed.data);
-        else await createProduct(parsed.data);
-        router.push("/admin/catalogue");
+        if (productId) {
+          await updateProduct(productId, parsed.data);
+          router.push("/admin/catalogue");
+        } else {
+          const createdId = await createProduct(parsed.data);
+          router.push(`/admin/catalogue/${createdId}/edit`);
+        }
       } catch (caught) {
         setError(caught instanceof Error ? caught.message : "Save failed.");
       }
@@ -58,6 +62,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
           name="name"
           defaultValue={value.name ?? ""}
           required
+          maxLength={200}
           className={inputClass}
         />
       </label>
@@ -67,6 +72,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
           <input
             name="variantName"
             defaultValue={value.variantName ?? ""}
+            maxLength={200}
             className={inputClass}
           />
         </label>
@@ -75,6 +81,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
           <input
             name="category"
             defaultValue={value.category ?? ""}
+            maxLength={120}
             className={inputClass}
           />
         </label>
@@ -85,6 +92,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
           name="description"
           defaultValue={value.description ?? ""}
           rows={3}
+          maxLength={10_000}
           className="rounded border p-2"
         />
       </label>
@@ -96,6 +104,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
             type="number"
             step="0.01"
             min="0"
+            max="1000000"
             required
             defaultValue={
               value.priceCents != null
@@ -110,6 +119,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
           <input
             name="sku"
             defaultValue={value.sku ?? ""}
+            maxLength={200}
             className={inputClass}
           />
         </label>
@@ -118,6 +128,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
           <input
             name="unitSize"
             defaultValue={value.unitSize ?? ""}
+            maxLength={200}
             className={inputClass}
           />
         </label>
@@ -128,6 +139,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
           name="imageUrl"
           type="url"
           defaultValue={value.imageUrl ?? ""}
+          maxLength={2_048}
           className={inputClass}
         />
       </label>
@@ -137,6 +149,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
           name="productUrl"
           type="url"
           defaultValue={value.productUrl ?? ""}
+          maxLength={2_048}
           className={inputClass}
         />
       </label>

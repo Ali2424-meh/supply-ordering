@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { asUser, db, makeProduct, makeUser, resetDb } from "./helpers";
+import { addToCart } from "../../src/actions/cart";
 import { submitOrder } from "../../src/actions/orders";
 
 describe("submitOrder", () => {
@@ -121,6 +122,40 @@ describe("submitOrder", () => {
     expect(results.filter((result) => result.ok)).toHaveLength(1);
     expect(results.filter((result) => !result.ok)).toHaveLength(1);
     expect(await db.order.count()).toBe(1);
+  });
+
+  test("a concurrent add is ordered or retained, never silently lost", async () => {
+    const user = await makeUser("CLEANER");
+    const product = await makeProduct();
+    await cartFor(user.id, [[product.id, 1]]);
+    asUser(user);
+
+    const [result] = await Promise.all([
+      submitOrder(),
+      addToCart(product.id, 2),
+    ]);
+
+    expect(result.ok).toBe(true);
+    const ordered = await db.orderItem.findFirst({
+      where: { productId: product.id },
+    });
+    const retained = await db.cartItem.findUnique({
+      where: { userId_productId: { userId: user.id, productId: product.id } },
+    });
+    expect((ordered?.quantity ?? 0) + (retained?.quantity ?? 0)).toBe(3);
+  });
+
+  test("rejects totals that cannot fit the database integer column", async () => {
+    const user = await makeUser("CLEANER");
+    const product = await makeProduct({ priceCents: 100_000_000 });
+    await cartFor(user.id, [[product.id, 999]]);
+    asUser(user);
+
+    await expect(submitOrder()).resolves.toMatchObject({
+      ok: false,
+      error: expect.stringMatching(/too large/i),
+    });
+    expect(await db.order.count()).toBe(0);
   });
 
   test("C-09: disabled cleaner cannot submit", async () => {

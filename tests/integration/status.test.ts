@@ -60,4 +60,14 @@ describe("updateOrderStatus", () => {
     asUser(supplyManager);
     await expect(updateOrderStatus("nope", "PAID")).rejects.toThrow(/not found/i);
   });
+
+  test("rejects oversized internal notes", async () => {
+    const cleaner = await makeUser("CLEANER");
+    const supplyManager = await makeUser("SUPPLY_MANAGER");
+    const order = await makeOrder(cleaner.id);
+    asUser(supplyManager);
+    await expect(
+      updateOrderStatus(order.id, "CONTACTED", "x".repeat(2_001)),
+    ).rejects.toThrow(/2,000/);
+  });
 });

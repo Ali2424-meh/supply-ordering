@@ -16,7 +16,7 @@ export default async function EditProductPage({
   if (!product) notFound();
   return (
     <div>
-      <h1 className="mb-1 text-xl font-semibold">Edit product</h1>
+      <h1 className="mb-1 text-xl font-semibold">Edit {product.name}</h1>
       {product.source === "SYNCED" && (
         <p className="mb-4 text-xs text-amber-700">
           Synced from the external store — the next catalogue refresh will

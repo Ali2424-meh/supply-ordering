@@ -54,6 +54,7 @@ export function StatusUpdateForm({
         onChange={(event) => setNote(event.target.value)}
         placeholder="Internal note (optional)"
         rows={2}
+        maxLength={2_000}
         className="mb-2 w-full rounded border p-2 text-sm"
       />
       {error && (

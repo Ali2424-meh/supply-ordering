@@ -15,6 +15,7 @@ const line = (
   imageUrl: null,
   priceCents: 1000,
   sku: null,
+  unitSize: null,
   productUrl: "https://x/products/p",
   ...overrides,
 });
@@ -42,6 +43,18 @@ describe("applyCatalogueLines", () => {
     expect(
       await db.priceHistory.count({ where: { productId: product!.id } }),
     ).toBe(2);
+  });
+
+  test("unchanged products are not rewritten or counted as updates", async () => {
+    await applyCatalogueLines([line("1")]);
+    const historyBefore = await db.priceHistory.count();
+
+    expect(await applyCatalogueLines([line("1")])).toEqual({
+      added: 0,
+      updated: 0,
+      deactivated: 0,
+    });
+    expect(await db.priceHistory.count()).toBe(historyBefore);
   });
 
   test("S-03: missing SYNCED products are deactivated, never deleted", async () => {
