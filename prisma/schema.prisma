@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLEANER
+  SUPPLY_MANAGER
+  ADMIN
+  MANAGER
+  CUSTOMER
+}
+
+enum ProductSource {
+  SYNCED
+  MANUAL
+}
+
+enum OrderStatus {
+  SUBMITTED
+  CONTACTED
+  AWAITING_PAYMENT
+  PAID
+  ORDERED_FROM_SUPPLIER
+  READY_FOR_COLLECTION
+  DELIVERED_COLLECTED
+  CANCELLED
+  ISSUE_ON_HOLD
+}
+
+enum ImportStatus {
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
+enum AuditAction {
+  CREATED
+  UPDATED
+  ACTIVATED
+  DEACTIVATED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  phone        String?
+  passwordHash String
+  role         Role
+  disabled     Boolean    @default(false)
+  cartItems    CartItem[]
+  orders       Order[]
+}
+
+model Product {
+  id               String         @id @default(cuid())
+  name             String
+  variantName      String?
+  category         String?
+  description      String?
+  imageUrl         String?
+  priceCents       Int
+  sku              String?
+  unitSize         String?
+  productUrl       String?
+  active           Boolean        @default(true)
+  source           ProductSource
+  shopifyVariantId String?        @unique
+  priceHistory     PriceHistory[]
+  cartItems        CartItem[]
+}
+
+model PriceHistory {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  priceCents Int
+  recordedAt DateTime @default(now())
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  @@unique([userId, productId])
+}
+
+model Order {
+  id          String       @id @default(cuid())
+  orderNumber String       @unique
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  status      OrderStatus  @default(SUBMITTED)
+  totalCents  Int
+  createdAt   DateTime     @default(now())
+  items       OrderItem[]
+  events      OrderEvent[]
+}
+
+model OrderItem {
+  id                 String  @id @default(cuid())
+  orderId            String
+  order              Order   @relation(fields: [orderId], references: [id])
+  productId          String?
+  nameSnapshot       String
+  variantSnapshot    String?
+  priceCentsSnapshot Int
+  quantity           Int
+}
+
+model OrderEvent {
+  id         String       @id @default(cuid())
+  orderId    String
+  order      Order        @relation(fields: [orderId], references: [id])
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  note       String?
+  actorId    String?
+  createdAt  DateTime     @default(now())
+}
+
+model ImportRun {
+  id           String       @id @default(cuid())
+  startedAt    DateTime     @default(now())
+  finishedAt   DateTime?
+  status       ImportStatus
+  added        Int          @default(0)
+  updated      Int          @default(0)
+  deactivated  Int          @default(0)
+  errorMessage String?
+}
+
+model AuditEvent {
+  id        String      @id @default(cuid())
+  actorId   String
+  entity    String
+  entityId  String
+  action    AuditAction
+  details   Json?
+  createdAt DateTime    @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String
+}
