@@ -50,7 +50,7 @@ marked complete below.
 | 12. Catalogue sync action | ✅ complete | df0dd80 | atomic apply + price history/deactivation; transaction-scoped advisory lock avoids pooled-connection bug; import success/failure tracking; 28 integration tests pass |
 | 13. App shells + nav | ✅ complete | 40cddb9 | responsive worker/admin navigation, role guards/placeholders, animated cart/status/shared UI, atomic admin toggle; metadata deferred finding resolved |
 | 14. Cleaner catalogue UI | ✅ complete | 8b11923 | responsive active-only grid, URL search/category filters, detail page, quantity stepper + reduced-motion-aware cart flight; build/lint/typecheck pass |
-| 15. Cart UI + submit flow | ✅ complete | 3222953 | responsive animated cart/total/removal, inactive-line shake, pending-safe submission and confirmation; reduced-motion respected; build/lint/typecheck pass |
+| 15. Cart UI + submit flow | ✅ complete | 3222953 + 6c9a6c0 | responsive animated cart/total/removal, inactive-line shake, pending-safe submission/confirmation, visible guard errors; reduced-motion respected |
 | 16. Cleaner orders UI | ✅ complete | 51f0adb | responsive own-order list/detail, DB-scoped ownership, immutable snapshots, note-free animated history; build/lint/typecheck pass |
 | 17. Admin orders UI | ✅ complete | ce73492 | responsive all-worker order table/search/filter/sort, contact/detail, status+note form, internal timeline, error boundary; build/lint/typecheck pass |
 | 18. Admin catalogue UI | ✅ complete | 363234a | responsive active/inactive catalogue + filters, accessible shared create/edit form, guarded refresh and import history; full unit/integration/build checks pass |
