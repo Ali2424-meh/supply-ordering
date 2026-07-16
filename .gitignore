@@ -43,6 +43,11 @@ next-env.d.ts
 
 # email capture
 .email-capture/
+.email-capture-e2e/
+
+# Playwright
+/playwright-report/
+/test-results/
 
 # superpowers
 .superpowers/
