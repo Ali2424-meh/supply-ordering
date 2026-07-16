@@ -104,7 +104,19 @@ marked complete below.
 
 - Local diff/spec review found no remaining blocking or important issue after
   the post-completion hardening pass.
-- Claude Code independent review was attempted again after the hardening build
-  and aggregate test pass (2026-07-17, before 2am Asia/Manila), but the CLI
-  remained session-capped until 2am. It did not review or approve the final
-  changes; rerun it after the cap resets if an additional opinion is desired.
+- **Claude Code independent verification completed 2026-07-17:**
+  - Re-ran the full suite independently: lint clean, typecheck clean,
+    22/22 unit, 33/33 integration, 19/19 Playwright E2E (with user-consented
+    `supply_e2e` reset — Prisma v6 requires
+    `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION` when an AI agent runs
+    `migrate reset`; humans running `npm run test:e2e` are unaffected).
+  - Independent whole-branch code review (b5f27c2..HEAD): **READY TO MERGE** —
+    zero Critical, zero Important findings. Spot-checked 11 spec scenario IDs
+    against implementation + tests, all ✅. Reviewer specifically validated the
+    hardening commit's concurrency design (FOR UPDATE user lock serializing
+    double-submits, FOR SHARE product locks during snapshot, atomic sequence
+    numbering, post-commit email isolation).
+  - Remaining minors closed: clampQuantity non-finite test added, note-trimming
+    comment added. One cosmetic item accepted as-is: admin layout renders a
+    "supply ordering is disabled" shell when the feature is off (child pages
+    independently 404 — no data exposure).
