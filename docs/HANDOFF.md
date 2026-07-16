@@ -60,6 +60,7 @@ marked complete below.
 
 ## Post-completion hardening (2026-07-17)
 
+- **Commit:** `7ac6ff2` (`fix: production hardening and catalogue pagination`).
 - **Authorization and privacy:** role guards now reload the current user from
   the database; disabled users cannot authenticate; Server Actions use a fresh
   authorization read; submission confirmation validates order ownership.
