@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-16
 **Status:** Approved
-**Functional spec:** `Supply_Ordering.md` (source: /Users/iyah/Downloads/Supply_Ordering.md — copy into `docs/` alongside this design)
+**Functional spec:** [`docs/Supply_Ordering.md`](../../Supply_Ordering.md)
 
 ## Summary
 
@@ -88,7 +88,8 @@ Prisma models (plus Auth.js session tables):
 | `OrderItem` | orderId, productId (nullable), nameSnapshot, variantSnapshot, priceCentsSnapshot, quantity |
 | `OrderEvent` | orderId, fromStatus, toStatus, note, actorId, createdAt |
 | `ImportRun` | startedAt, finishedAt, status, added, updated, deactivated, errorMessage |
-| `Setting` | key unique, value — feature toggle `supplyOrderingEnabled` |
+| `AuditEvent` | actorId, entity ("Product"), entityId, action (CREATED, UPDATED, ACTIVATED, DEACTIVATED), details JSON, createdAt — satisfies SM-08/SM-09 |
+| `Setting` | key unique, value — feature toggle `supplyOrderingEnabled`, editable on an admin settings page (ADMIN role only) |
 
 Order statuses: Submitted, Contacted, Awaiting payment, Paid, Ordered from
 supplier, Ready for collection, Delivered / collected, Cancelled,
@@ -110,7 +111,8 @@ Key decisions:
   row. Missing variants → `active: false` (never deleted). Price change →
   update Product + append PriceHistory row. Returned products are updated and
   reactivated per store data (S-04). Manual products (`source: MANUAL`) are
-  never touched by sync.
+  never touched by sync. Staff may edit `SYNCED` products, but the store is
+  the source of truth: the next sync reasserts store data over such edits.
 
 ## Screens & Components
 
@@ -133,7 +135,7 @@ Persistent `CartBadge` in the portal header on every screen.
 | Order requests | `OrdersTable` — search (worker/order #), filter (status), sort (date/total) | URL-param driven, paginated |
 | Order detail | Worker contact card, items table, `StatusUpdateForm` (status select + optional note), `OrderHistory` | Any status settable |
 | Catalogue | `ProductsTable` — search, filter incl. active state, sort | Active + inactive with badges |
-| Product create/edit | `ProductForm` — Zod schema shared with server action | Manual edits allowed on synced products |
+| Product create/edit | `ProductForm` — Zod schema shared with server action | Every create/edit/activate/deactivate writes an `AuditEvent` (SM-08/SM-09); edits to synced products last until the next sync |
 | Import history | `ImportRunsTable` + "Refresh catalogue" button | Live progress state, then result counts |
 
 Shared: `StatusBadge` (all 9 statuses, color-coded), `Money`, `EmptyState`,
