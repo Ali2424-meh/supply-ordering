@@ -40,7 +40,7 @@
 
 ```bash
 cd /Users/iyah/Projects/supply-ordering
-npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --no-import-alias --use-npm
+npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm
 ```
 
 Expected: scaffold completes; `src/app/page.tsx` exists.
