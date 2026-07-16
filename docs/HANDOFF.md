@@ -48,7 +48,7 @@ marked complete below.
 | 10. Status updates | ✅ complete | b00cb36 | manager/admin authorization, trimmed internal notes, locked status history updates; 18 integration tests pass; local review approved |
 | 11. Product CRUD + audit | ✅ complete | 09b592a | shared Zod input, transactional create/edit, audit + activation events, price history; 23 integration tests pass; local review approved |
 | 12. Catalogue sync action | ✅ complete | df0dd80 | atomic apply + price history/deactivation; transaction-scoped advisory lock avoids pooled-connection bug; import success/failure tracking; 28 integration tests pass |
-| 13. App shells + nav | ⬜ | | responsive constraint applies from here on |
+| 13. App shells + nav | ✅ complete | 40cddb9 | responsive worker/admin navigation, role guards/placeholders, animated cart/status/shared UI, atomic admin toggle; metadata deferred finding resolved |
 | 14. Cleaner catalogue UI | ⬜ | | |
 | 15. Cart UI + submit flow | ⬜ | | |
 | 16. Cleaner orders UI | ⬜ | | |
@@ -59,7 +59,6 @@ marked complete below.
 
 ## Deferred minor findings (triage at final review)
 
-- `src/app/layout.tsx` metadata still says "Create Next App" (Task 1 review).
 - `prisma/seed.ts` error path could `process.exit(1)` (Task 2 review, spec-matching).
 - `OrderItem.productId` deliberately has no FK constraint (snapshot design) —
   application code must not write dangling ids (Task 2 review, design note).
