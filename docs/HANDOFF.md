@@ -41,7 +41,7 @@ marked complete below.
 | 3. Format + status helpers | ✅ complete | f03a562 | review approved |
 | 4. Cart pure functions | ✅ complete | 44c9313 | review approved |
 | 5. Shopify mapping | ✅ complete | 604a2e8 | exact plan match; 14 unit tests pass; local review approved (Claude CLI limit prevented second review) |
-| 6. Auth.js + guards + login | ✅ complete | 689be78 | typecheck/lint/unit/build pass; credentials flow manually verified; local review approved (Claude CLI still limited) |
+| 6. Auth.js + guards + login | ✅ complete | 689be78 + 04912b1 | E2E fixed the same-action cookie visibility redirect; all role landings verified; Claude CLI still limited |
 | 7. Cart actions + int-test harness | ✅ complete | f2f700e + 9af243c | review fix atomically caps merged quantities at 999; 6 DB integration tests pass; Vitest 4 harness stubs `next/cache`; Claude CLI still limited |
 | 8. Order submission action | ✅ complete | 62b9edf | transaction rechecks auth state/toggle, snapshots items, clears cart; per-user lock prevents concurrent double-submit; 13 integration tests pass; Claude CLI still limited |
 | 9. Order email | ✅ complete | ebe25e2 | React Email + capture/Resend sender; configurable verified `EMAIL_FROM`; Resend errors surface and post-commit failures cannot roll back orders; 15 unit + 14 integration tests pass; Claude CLI still limited |
@@ -54,7 +54,7 @@ marked complete below.
 | 16. Cleaner orders UI | ✅ complete | 51f0adb | responsive own-order list/detail, DB-scoped ownership, immutable snapshots, note-free animated history; build/lint/typecheck pass |
 | 17. Admin orders UI | ✅ complete | ce73492 | responsive all-worker order table/search/filter/sort, contact/detail, status+note form, internal timeline, error boundary; build/lint/typecheck pass |
 | 18. Admin catalogue UI | ✅ complete | 363234a | responsive active/inactive catalogue + filters, accessible shared create/edit form, guarded refresh and import history; full unit/integration/build checks pass |
-| 19. Playwright E2E suite | ⬜ | | |
+| 19. Playwright E2E suite | ✅ complete | cbf2fdb | isolated reset/seeded DB, managed store + email fixtures, C/SM/A/M/U/S scenarios and mobile overflow smoke; 19 E2E tests pass |
 | 20. Full verification sweep | ⬜ | | |
 
 ## Deferred minor findings (triage at final review)
