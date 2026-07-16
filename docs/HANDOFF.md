@@ -52,7 +52,7 @@ marked complete below.
 | 14. Cleaner catalogue UI | ✅ complete | 8b11923 | responsive active-only grid, URL search/category filters, detail page, quantity stepper + reduced-motion-aware cart flight; build/lint/typecheck pass |
 | 15. Cart UI + submit flow | ✅ complete | 3222953 | responsive animated cart/total/removal, inactive-line shake, pending-safe submission and confirmation; reduced-motion respected; build/lint/typecheck pass |
 | 16. Cleaner orders UI | ✅ complete | 51f0adb | responsive own-order list/detail, DB-scoped ownership, immutable snapshots, note-free animated history; build/lint/typecheck pass |
-| 17. Admin orders UI | ⬜ | | |
+| 17. Admin orders UI | ✅ complete | ce73492 | responsive all-worker order table/search/filter/sort, contact/detail, status+note form, internal timeline, error boundary; build/lint/typecheck pass |
 | 18. Admin catalogue UI | ⬜ | | |
 | 19. Playwright E2E suite | ⬜ | | |
 | 20. Full verification sweep | ⬜ | | |
