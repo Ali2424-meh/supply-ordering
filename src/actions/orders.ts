@@ -151,6 +151,7 @@ export async function updateOrderStatus(
 ): Promise<void> {
   const actor = await guardAction(["SUPPLY_MANAGER", "ADMIN"]);
   const target = statusSchema.parse(toStatus);
+  // noteSchema trims; `|| null` then coerces a whitespace-only note to null.
   const trimmedNote = note == null ? null : noteSchema.parse(note) || null;
 
   await prisma.$transaction(async (tx) => {

@@ -23,6 +23,11 @@ describe("clampQuantity", () => {
     expect(clampQuantity(2.9)).toBe(2);
     expect(clampQuantity(5000)).toBe(999);
   });
+  test("non-finite inputs clamp to 1", () => {
+    expect(clampQuantity(Number.NaN)).toBe(1);
+    expect(clampQuantity(Number.POSITIVE_INFINITY)).toBe(1);
+    expect(clampQuantity(Number.NEGATIVE_INFINITY)).toBe(1);
+  });
 });
 
 describe("hasDuplicateLines", () => {
