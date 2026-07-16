@@ -38,7 +38,7 @@ marked complete below.
 | --- | --- | --- | --- |
 | 1. Scaffold + Docker + deps | ✅ complete | a018ec3 | `@/*` alias kept (plan typo fixed); review approved |
 | 2. Prisma schema + seed | ✅ complete | 42d8bc5 (+ fixups) | Prisma v7→v6 downgrade; prisma CLI moved to devDependencies; review approved |
-| 3. Format + status helpers | ⬜ | | |
+| 3. Format + status helpers | ✅ complete | f03a562 | review approved |
 | 4. Cart pure functions | ⬜ | | |
 | 5. Shopify mapping | ⬜ | | |
 | 6. Auth.js + guards + login | ⬜ | | |
