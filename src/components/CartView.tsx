@@ -42,19 +42,28 @@ export function CartView({ lines }: { lines: Line[] }) {
 
   function handleRemove(line: Line) {
     const prevQuantity = line.quantity;
-    act(() => removeFromCart(line.productId));
-    toast(`Removed ${line.name}`, {
-      actionLabel: "Undo",
-      onAction: () => {
-        startTransition(async () => {
-          try {
-            await addToCart(line.productId, prevQuantity);
-            router.refresh();
-          } catch {
-            // silently ignore undo failure
-          }
+    startTransition(async () => {
+      setError(null);
+      try {
+        await removeFromCart(line.productId);
+        router.refresh();
+        toast(`Removed ${line.name}`, {
+          actionLabel: "Undo",
+          onAction: () => {
+            startTransition(async () => {
+              try {
+                await addToCart(line.productId, prevQuantity);
+                router.refresh();
+              } catch {
+                // silently ignore undo failure
+              }
+            });
+          },
         });
-      },
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : "Cart update failed.");
+        toast(`Failed to remove ${line.name}`);
+      }
     });
   }
 

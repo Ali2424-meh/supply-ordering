@@ -24,13 +24,26 @@ test("C-03: catalogue lists only active products with search and category filter
 }) => {
   await login(page, "cleaner@example.com");
   await page.goto("/supplies/catalogue");
+
+  // Active-only: inactive "Retired Mop" must not appear; active "Glass Cleaner 5L" must appear.
   await expect(page.getByTestId("product-card").first()).toBeVisible();
   await expect(page.locator("body")).not.toContainText("Retired Mop");
-  await page.getByRole("link", { name: "Chemicals" }).click();
-  await expect(page.getByTestId("product-card")).toHaveCount(1);
-  // Live search: type into the search input and wait for the debounce (300ms) to filter results.
-  // There is no submit button — the SearchBar updates ?q= via router.replace automatically.
+
+  // Live search — non-matching term produces empty state (proves the search path fires).
+  await page.fill('input[name="q"]', "xyznonexistent");
+  await page.waitForURL(/q=xyznonexistent/);
+  await expect(page.getByTestId("product-card")).toHaveCount(0);
+  await expect(page.locator("body")).toContainText(/no products found/i);
+
+  // Matching term restores results (proves search narrows AND widens correctly).
   await page.fill('input[name="q"]', "Glass");
+  await page.waitForURL(/q=Glass/);
+  await expect(page.getByTestId("product-card")).toHaveCount(1);
+
+  // Category filter: clear search, then filter to Chemicals (only 1 product).
+  await page.fill('input[name="q"]', "");
+  await page.waitForURL((url) => !url.searchParams.has("q") || url.searchParams.get("q") === "");
+  await page.getByRole("link", { name: "Chemicals" }).click();
   await expect(page.getByTestId("product-card")).toHaveCount(1);
 });
 
