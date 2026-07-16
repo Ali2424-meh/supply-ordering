@@ -35,15 +35,19 @@ export function CartView({ lines }: { lines: Line[] }) {
   function submit() {
     setError(null);
     startTransition(async () => {
-      const result = await submitOrder();
-      if (result.ok) {
-        router.push(
-          `/supplies/cart/submitted?orderNumber=${encodeURIComponent(result.orderNumber)}`,
-        );
-      } else {
-        setError(result.error);
-        setInvalid(result.invalidProductIds ?? []);
-        router.refresh();
+      try {
+        const result = await submitOrder();
+        if (result.ok) {
+          router.push(
+            `/supplies/cart/submitted?orderNumber=${encodeURIComponent(result.orderNumber)}`,
+          );
+        } else {
+          setError(result.error);
+          setInvalid(result.invalidProductIds ?? []);
+          router.refresh();
+        }
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : "Submission failed.");
       }
     });
   }
