@@ -49,7 +49,7 @@ marked complete below.
 | 11. Product CRUD + audit | ✅ complete | 09b592a | shared Zod input, transactional create/edit, audit + activation events, price history; 23 integration tests pass; local review approved |
 | 12. Catalogue sync action | ✅ complete | df0dd80 | atomic apply + price history/deactivation; transaction-scoped advisory lock avoids pooled-connection bug; import success/failure tracking; 28 integration tests pass |
 | 13. App shells + nav | ✅ complete | 40cddb9 | responsive worker/admin navigation, role guards/placeholders, animated cart/status/shared UI, atomic admin toggle; metadata deferred finding resolved |
-| 14. Cleaner catalogue UI | ⬜ | | |
+| 14. Cleaner catalogue UI | ✅ complete | 8b11923 | responsive active-only grid, URL search/category filters, detail page, quantity stepper + reduced-motion-aware cart flight; build/lint/typecheck pass |
 | 15. Cart UI + submit flow | ⬜ | | |
 | 16. Cleaner orders UI | ⬜ | | |
 | 17. Admin orders UI | ⬜ | | |
