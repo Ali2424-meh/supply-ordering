@@ -3,7 +3,7 @@
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { auth, homeFor, signIn, signOut } from "@/lib/auth";
+import { homeFor, signIn, signOut } from "@/lib/auth";
 
 export type LoginState = { error?: string };
 
@@ -11,9 +11,10 @@ export async function loginAction(
   _prev: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
+  const email = String(formData.get("email") ?? "").toLowerCase().trim();
   try {
     await signIn("credentials", {
-      email: formData.get("email"),
+      email,
       password: formData.get("password"),
       redirect: false,
     });
@@ -22,10 +23,10 @@ export async function loginAction(
     throw error;
   }
 
-  const session = await auth();
-  const user = session
-    ? await prisma.user.findUnique({ where: { id: session.user.id } })
-    : null;
+  // The session cookie written by signIn is not readable through auth() until
+  // the next request. Credentials have succeeded at this point, so resolve the
+  // destination from the same normalized unique email instead.
+  const user = await prisma.user.findUnique({ where: { email } });
   redirect(user ? homeFor(user.role) : "/login");
 }
 
