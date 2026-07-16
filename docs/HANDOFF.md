@@ -42,7 +42,7 @@ marked complete below.
 | 4. Cart pure functions | ✅ complete | 44c9313 | review approved |
 | 5. Shopify mapping | ✅ complete | 604a2e8 | exact plan match; 14 unit tests pass; local review approved (Claude CLI limit prevented second review) |
 | 6. Auth.js + guards + login | ✅ complete | 689be78 | typecheck/lint/unit/build pass; credentials flow manually verified; local review approved (Claude CLI still limited) |
-| 7. Cart actions + int-test harness | ✅ complete | f2f700e | 5 DB integration tests pass; Vitest 4 harness uses hoisted auth state + stubs `next/cache`; local review approved (Claude CLI still limited) |
+| 7. Cart actions + int-test harness | ✅ complete | f2f700e + 9af243c | review fix atomically caps merged quantities at 999; 6 DB integration tests pass; Vitest 4 harness stubs `next/cache`; Claude CLI still limited |
 | 8. Order submission action | ⬜ | | |
 | 9. Order email | ⬜ | | |
 | 10. Status updates | ⬜ | | |
