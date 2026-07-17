@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { loginAction } from "@/actions/auth";
+import { input } from "@/lib/ui";
 
 export function LoginForm() {
   const [state, action, pending] = useActionState(loginAction, {});
@@ -15,7 +16,7 @@ export function LoginForm() {
           autoComplete="email"
           required
           placeholder="you@example.com"
-          className="min-h-12 rounded-xl border border-zinc-300 bg-white px-3 py-2.5 font-normal shadow-sm transition placeholder:text-zinc-400 hover:border-zinc-400 focus:border-brand focus:ring-3 focus:ring-blue-100 focus:outline-none"
+          className={input("lg")}
         />
       </label>
       <label className="grid gap-1.5 text-sm font-medium">
@@ -25,7 +26,7 @@ export function LoginForm() {
           type="password"
           autoComplete="current-password"
           required
-          className="min-h-12 rounded-xl border border-zinc-300 bg-white px-3 py-2.5 font-normal shadow-sm transition hover:border-zinc-400 focus:border-brand focus:ring-3 focus:ring-blue-100 focus:outline-none"
+          className={input("lg")}
         />
       </label>
       {state.error && (

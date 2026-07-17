@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 
 export function SubmittedCheck({ orderNumber }: { orderNumber: string }) {
   return (
-    <div className="flex flex-col items-center py-12 text-center">
+    <div className="flex flex-col items-center px-6 pb-6 pt-10 text-center">
       <motion.svg
         width="72"
         height="72"
@@ -17,7 +17,7 @@ export function SubmittedCheck({ orderNumber }: { orderNumber: string }) {
           cy="36"
           r="32"
           fill="none"
-          stroke="#059669"
+          stroke="var(--color-brand)"
           strokeWidth="4"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
@@ -26,7 +26,7 @@ export function SubmittedCheck({ orderNumber }: { orderNumber: string }) {
         <motion.path
           d="M22 37 L32 47 L51 27"
           fill="none"
-          stroke="#059669"
+          stroke="var(--color-brand)"
           strokeWidth="5"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
