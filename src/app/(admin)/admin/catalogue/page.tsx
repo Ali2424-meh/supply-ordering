@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { EmptyState } from "@/components/EmptyState";
+import { PageHeader } from "@/components/PageHeader";
 import { Pagination } from "@/components/Pagination";
 import { formatAud } from "@/lib/format";
 import { requireRole } from "@/lib/guards";
@@ -77,12 +78,16 @@ export default async function AdminCataloguePage({
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Product catalogue</h1>
-        <Link href="/admin/catalogue/new" className={btn("primary", "md")}>
-          New product
-        </Link>
-      </div>
+      <PageHeader
+        eyebrow="Supply"
+        title="Product catalogue"
+        description={`${total.toLocaleString("en-AU")} product${total === 1 ? "" : "s"}, active and inactive`}
+        actions={
+          <Link href="/admin/catalogue/new" className={btn("primary", "md")}>
+            New product
+          </Link>
+        }
+      />
       <Form
         action="/admin/catalogue"
         className="mb-4 grid gap-2 text-sm sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_auto_auto_auto]"

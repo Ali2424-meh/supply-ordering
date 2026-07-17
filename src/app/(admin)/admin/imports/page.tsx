@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EmptyState } from "@/components/EmptyState";
+import { PageHeader } from "@/components/PageHeader";
 import { RefreshCatalogueButton } from "@/components/RefreshCatalogueButton";
 import { requireRole } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
@@ -17,7 +18,11 @@ export default async function ImportsPage() {
   });
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold">Catalogue import history</h1>
+      <PageHeader
+        eyebrow="Supply"
+        title="Catalogue import history"
+        description="Each refresh adds, updates, or deactivates products from cleanersgallery.com.au."
+      />
       <RefreshCatalogueButton />
       {runs.length === 0 ? (
         <EmptyState title="No imports yet" />

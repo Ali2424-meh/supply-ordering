@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { OrderStatus, type Prisma } from "@prisma/client";
 import { EmptyState } from "@/components/EmptyState";
+import { PageHeader } from "@/components/PageHeader";
 import { Pagination } from "@/components/Pagination";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatAud } from "@/lib/format";
@@ -104,21 +105,27 @@ export default async function AdminOrdersPage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold">Order requests</h1>
+      <PageHeader
+        eyebrow="Supply"
+        title="Order requests"
+        description={`${totalAllStatuses.toLocaleString("en-AU")} request${totalAllStatuses === 1 ? "" : "s"} from all workers`}
+      />
 
-      {/* Status summary cards */}
-      <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
-        {/* All card */}
+      {/* Segmented status rail */}
+      <div className="mb-4 flex divide-x divide-zinc-100 overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm">
         <Link
           href={cardHref("")}
-          className={`flex shrink-0 flex-col rounded-xl border px-4 py-3 text-sm shadow-sm transition-colors ${
+          aria-current={status === "" ? "page" : undefined}
+          className={`flex shrink-0 flex-col border-b-2 px-4 py-2.5 text-sm transition-colors ${
             status === ""
-              ? "border-brand bg-brand text-white"
-              : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:shadow"
+              ? "border-brand bg-brand-tint"
+              : "border-transparent hover:bg-zinc-50"
           }`}
         >
-          <span className="text-xs font-medium opacity-80">All</span>
-          <span className="mt-0.5 text-xl font-bold">{totalAllStatuses}</span>
+          <span className="text-xs font-medium text-zinc-600">All</span>
+          <span className={`text-lg font-bold ${status === "" ? "text-brand" : "text-zinc-900"}`}>
+            {totalAllStatuses}
+          </span>
         </Link>
         {STATUS_ORDER.map((s) => {
           const count = countByStatus[s] ?? 0;
@@ -128,17 +135,18 @@ export default async function AdminOrdersPage({
             <Link
               key={s}
               href={cardHref(s)}
-              className={`flex shrink-0 flex-col rounded-xl border px-4 py-3 text-sm shadow-sm transition-colors ${
+              aria-current={isActive ? "page" : undefined}
+              className={`flex shrink-0 flex-col border-b-2 px-4 py-2.5 text-sm transition-colors ${
                 isActive
                   ? "border-brand bg-brand-tint"
-                  : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow"
+                  : "border-transparent hover:bg-zinc-50"
               }`}
             >
-              <span className="flex items-center gap-1.5 text-xs font-medium text-zinc-600">
+              <span className="flex items-center gap-1.5 whitespace-nowrap text-xs font-medium text-zinc-600">
                 <span className={`h-2 w-2 rounded-full ${dotColor}`} aria-hidden="true" />
                 {STATUS_LABELS[s]}
               </span>
-              <span className={`mt-0.5 text-xl font-bold ${isActive ? "text-brand" : "text-zinc-900"}`}>
+              <span className={`text-lg font-bold ${isActive ? "text-brand" : "text-zinc-900"}`}>
                 {count}
               </span>
             </Link>
