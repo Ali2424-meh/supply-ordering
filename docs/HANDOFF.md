@@ -193,10 +193,13 @@ reviewed and approved; full suite green after each (lint, typecheck, 24 unit,
   typecheck, 24 unit tests, 44 integration tests, 23 Playwright scenarios, and
   the optimized production build.
 - Added a Vercel production build that applies committed Prisma migrations
-  before generating the client and building Next.js. The linked Vercel project
-  uses a Neon Postgres database in Sydney and keeps deployment credentials out
-  of git. Production seed passwords are supplied only to the one-off seed
-  command and are not stored as runtime environment variables.
+  through Neon's unpooled migration URL before generating the client and
+  building Next.js. Build-time advisory locking is disabled because Vercel
+  already serializes a deployment and pooled session locks can outlive a build.
+  The linked Vercel project uses a Neon Postgres database in Sydney and keeps
+  deployment credentials out of git. Production seed passwords are supplied
+  only to the one-off seed command and are not stored as runtime environment
+  variables.
 - The first Neon catalogue bootstrap exposed the cost of thousands of
   sequential product inserts and rolled back cleanly at the transaction guard.
   New synced products and their initial price history are now bulk-created in
