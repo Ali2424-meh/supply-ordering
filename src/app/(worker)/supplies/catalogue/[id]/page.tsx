@@ -16,8 +16,15 @@ export default async function ProductPage({
   const product = await prisma.product.findUnique({ where: { id } });
   if (!product || !product.active) notFound();
 
+  // Sibling variants share the product name; each stays its own catalogue line.
+  const variants = await prisma.product.findMany({
+    where: { active: true, name: product.name },
+    orderBy: [{ priceCents: "asc" }, { id: "asc" }],
+    select: { id: true, variantName: true, priceCents: true },
+  });
+
   return (
-    <article className="mx-auto max-w-lg">
+    <article className="mx-auto max-w-3xl">
       {/* Breadcrumb */}
       <nav className="mb-4 text-xs text-zinc-400">
         <Link href="/supplies/catalogue" className="hover:text-brand hover:underline">
@@ -38,18 +45,18 @@ export default async function ProductPage({
         <span className="text-zinc-600">{product.name}</span>
       </nav>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6">
+      <div className="grid gap-6 sm:grid-cols-2 sm:items-start">
         {/* Product images may come from manually configured external hosts; keep
             them browser-fetched instead of widening the server image allowlist. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={product.imageUrl ?? "/placeholder.svg"}
           alt={product.name}
-          className="mb-4 aspect-square w-full overflow-hidden rounded-xl bg-zinc-100 object-contain transition-transform duration-300 hover:scale-105"
+          className="aspect-square w-full overflow-hidden rounded-xl bg-zinc-100 object-contain"
           id="product-hero"
         />
 
-        <div className="mb-4">
+        <div>
           {product.category && (
             <span className="mb-2 inline-flex items-center gap-1 rounded-full bg-brand-tint px-2.5 py-0.5 text-xs font-medium text-brand">
               <Tag size={11} aria-hidden="true" />
@@ -64,25 +71,55 @@ export default async function ProductPage({
             <p className="text-sm text-zinc-500">Unit size: {product.unitSize}</p>
           )}
           <p className="mt-2 text-2xl font-bold text-zinc-900">{formatAud(product.priceCents)}</p>
+
+          {variants.length > 1 && (
+            <div className="mt-3">
+              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                Choose a variant
+              </p>
+              <ul className="flex flex-wrap gap-1.5">
+                {variants.map((variant) => {
+                  const isCurrent = variant.id === product.id;
+                  return (
+                    <li key={variant.id}>
+                      <Link
+                        href={`/supplies/catalogue/${variant.id}`}
+                        aria-current={isCurrent ? "page" : undefined}
+                        className={`inline-flex min-h-9 items-center rounded-full border px-3 py-1.5 text-sm transition ${
+                          isCurrent
+                            ? "border-brand bg-brand text-white"
+                            : "border-zinc-200 bg-white text-zinc-700 hover:border-brand/40 hover:text-brand"
+                        }`}
+                      >
+                        {variant.variantName ?? "Standard"}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
+          {product.description && (
+            <p className="mt-4 text-sm leading-relaxed text-zinc-600">{product.description}</p>
+          )}
+
+          <div className="mt-4">
+            <AddToCartButton productId={product.id} imageUrl={product.imageUrl} />
+          </div>
+
+          {product.productUrl && (
+            <a
+              href={product.productUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-brand underline decoration-brand/30 underline-offset-2 hover:text-brand-hover"
+            >
+              <ExternalLink size={14} aria-hidden="true" />
+              View on cleanersgallery.com.au
+            </a>
+          )}
         </div>
-
-        {product.description && (
-          <p className="mb-4 text-sm text-zinc-600 leading-relaxed">{product.description}</p>
-        )}
-
-        <AddToCartButton productId={product.id} imageUrl={product.imageUrl} />
-
-        {product.productUrl && (
-          <a
-            href={product.productUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-brand underline decoration-brand/30 underline-offset-2 hover:text-brand-hover"
-          >
-            <ExternalLink size={14} aria-hidden="true" />
-            View on cleanersgallery.com.au
-          </a>
-        )}
       </div>
     </article>
   );

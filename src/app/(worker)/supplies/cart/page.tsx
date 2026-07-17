@@ -15,23 +15,27 @@ export default async function CartPage() {
   });
   if (items.length === 0) {
     return (
-      <EmptyState
-        title="Your cart is empty"
-        hint="Browse the catalogue to add supplies."
-      />
+      <div className="mx-auto max-w-3xl">
+        <EmptyState
+          title="Your cart is empty"
+          hint="Browse the catalogue to add supplies."
+        />
+      </div>
     );
   }
   return (
-    <CartView
-      lines={items.map((item) => ({
-        productId: item.productId,
-        name: item.product.name,
-        variantName: item.product.variantName,
-        imageUrl: item.product.imageUrl,
-        priceCents: item.product.priceCents,
-        quantity: item.quantity,
-        active: item.product.active,
-      }))}
-    />
+    <div className="mx-auto max-w-3xl">
+      <CartView
+        lines={items.map((item) => ({
+          productId: item.productId,
+          name: item.product.name,
+          variantName: item.product.variantName,
+          imageUrl: item.product.imageUrl,
+          priceCents: item.product.priceCents,
+          quantity: item.quantity,
+          active: item.product.active,
+        }))}
+      />
+    </div>
   );
 }

@@ -19,7 +19,7 @@ export default async function WorkerLayout({
   const cartCount = await prisma.cartItem.count({ where: { userId: user.id } });
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-[96rem]" style={{ background: "var(--color-paper)" }}>
+    <div className="mx-auto min-h-screen w-full max-w-7xl" style={{ background: "var(--color-paper)" }}>
       <WorkerScrollProgress />
       <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 bg-white/95 p-3 shadow-sm backdrop-blur sm:rounded-b-2xl sm:p-4 lg:px-6">
         <div className="flex items-center gap-4">

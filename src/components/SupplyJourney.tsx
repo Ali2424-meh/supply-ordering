@@ -20,7 +20,7 @@ const steps = [
     title: "Choose what you need",
     description:
       "Browse live catalogue items and build one clear supply request.",
-    accent: "bg-emerald-100 text-emerald-800",
+    accent: "bg-blue-100 text-blue-800",
   },
   {
     number: "02",
@@ -53,7 +53,7 @@ export function SupplyJourney() {
     >
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_90%_0%,rgba(167,243,208,0.32),transparent_30%),radial-gradient(circle_at_0%_100%,rgba(13,92,77,0.08),transparent_30%)]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_90%_0%,rgba(147,197,253,0.32),transparent_30%),radial-gradient(circle_at_0%_100%,rgba(37,99,235,0.08),transparent_30%)]"
       />
       <motion.div
         data-testid="journey-orbit"
@@ -62,7 +62,7 @@ export function SupplyJourney() {
         animate={{ rotate: 360 }}
         transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
       >
-        <span className="absolute bottom-5 left-4 h-3 w-3 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.8)]" />
+        <span className="absolute bottom-5 left-4 h-3 w-3 rounded-full bg-sky-300 shadow-[0_0_18px_rgba(125,211,252,0.8)]" />
       </motion.div>
 
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -91,7 +91,7 @@ export function SupplyJourney() {
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.9, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute left-[16%] right-[16%] top-10 hidden h-px origin-left bg-gradient-to-r from-emerald-300 via-amber-300 to-sky-300 lg:block"
+          className="absolute left-[16%] right-[16%] top-10 hidden h-px origin-left bg-gradient-to-r from-blue-300 via-amber-300 to-sky-300 lg:block"
         />
 
         {steps.map((step, index) => {
@@ -108,7 +108,7 @@ export function SupplyJourney() {
                 ease: [0.22, 1, 0.36, 1],
               }}
               whileHover={{ y: -5 }}
-              className="group relative rounded-2xl border border-zinc-200/80 bg-white/85 p-4 shadow-sm backdrop-blur-sm transition-shadow hover:shadow-lg hover:shadow-emerald-950/5 sm:p-5"
+              className="group relative rounded-2xl border border-zinc-200/80 bg-white/85 p-4 shadow-sm backdrop-blur-sm transition-shadow hover:shadow-lg hover:shadow-blue-950/5 sm:p-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <motion.span
@@ -137,12 +137,12 @@ export function SupplyJourney() {
 
       <div className="mt-5 flex flex-col justify-between gap-3 rounded-2xl bg-zinc-950 px-4 py-4 text-white sm:flex-row sm:items-center sm:px-5">
         <p className="flex items-center gap-2 text-sm text-zinc-300">
-          <Sparkles size={15} className="shrink-0 text-emerald-300" aria-hidden="true" />
+          <Sparkles size={15} className="shrink-0 text-sky-300" aria-hidden="true" />
           Ready to make your next supply run simpler?
         </p>
         <Link
           href="/supplies/catalogue"
-          className="group inline-flex min-h-10 w-fit items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-100"
+          className="group inline-flex min-h-10 w-fit items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-blue-100"
         >
           Explore supplies
           <ArrowUpRight

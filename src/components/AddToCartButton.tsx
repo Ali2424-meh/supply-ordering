@@ -76,7 +76,7 @@ export function AddToCartButton({
           whileTap={{ scale: 0.95 }}
           disabled={pending}
           onClick={launch}
-          className="min-h-11 flex-1 rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-60"
+          className="min-h-11 flex-1 rounded-lg bg-brand px-4 py-2 font-medium text-white shadow-sm transition-colors hover:bg-brand-hover disabled:opacity-60"
         >
           {pending ? "Adding…" : "Add to cart"}
         </motion.button>

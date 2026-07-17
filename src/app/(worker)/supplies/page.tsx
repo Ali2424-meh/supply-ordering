@@ -119,12 +119,12 @@ export default async function SuppliesHome({
           />
         ) : (
           <>
-            <ul className="flex flex-col gap-2">
+            <ul className="divide-y divide-zinc-100 overflow-hidden rounded-xl border border-zinc-200 bg-white">
               {orders.map((order) => (
                 <li
                   key={order.id}
                   data-testid="order-card"
-                  className="flex items-stretch gap-2 rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:border-brand/30 hover:shadow"
+                  className="flex items-stretch gap-2 transition hover:bg-brand-tint/40"
                 >
                   <Link
                     href={`/supplies/orders/${order.orderNumber}`}

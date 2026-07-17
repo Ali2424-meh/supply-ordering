@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Sign in" };
 export default function LoginPage() {
   return (
     <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_80%_10%,#d1fae5,transparent_30%),linear-gradient(135deg,#f8faf9,#f4f4f5)] p-3 sm:p-5">
-      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] w-full max-w-7xl overflow-hidden rounded-[1.75rem] border border-white/70 bg-white shadow-2xl shadow-emerald-950/10 sm:min-h-[calc(100vh-2.5rem)] lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] w-full max-w-7xl overflow-hidden rounded-[1.75rem] border border-white/70 bg-white shadow-2xl shadow-blue-950/10 sm:min-h-[calc(100vh-2.5rem)] lg:grid-cols-[1.15fr_0.85fr]">
         <LoginShowcase />
         <section
           className="flex items-center justify-center px-6 py-10 sm:px-10 lg:px-12"

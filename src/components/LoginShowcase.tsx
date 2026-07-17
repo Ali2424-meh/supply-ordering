@@ -39,7 +39,7 @@ export function LoginShowcase() {
     >
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(110,231,183,0.23),transparent_34%),radial-gradient(circle_at_90%_75%,rgba(255,255,255,0.13),transparent_38%)]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(147,197,253,0.25),transparent_34%),radial-gradient(circle_at_90%_75%,rgba(255,255,255,0.13),transparent_38%)]"
       />
       <motion.div
         aria-hidden="true"
@@ -53,7 +53,7 @@ export function LoginShowcase() {
       />
       <motion.div
         aria-hidden="true"
-        className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full border border-emerald-200/10 bg-emerald-300/[0.06]"
+        className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full border border-sky-200/10 bg-sky-300/[0.08]"
         animate={
           reducedMotion
             ? undefined
@@ -78,7 +78,7 @@ export function LoginShowcase() {
             transition={{ duration: 0.5, delay: 0.08 }}
             className="max-w-xl"
           >
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-emerald-50 backdrop-blur-sm">
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-blue-50 backdrop-blur-sm">
               <Sparkles size={13} aria-hidden="true" />
               Simple supply ordering
             </p>
@@ -88,7 +88,7 @@ export function LoginShowcase() {
             >
               From shelf to request, without the paperwork.
             </h2>
-            <p className="mt-4 hidden max-w-md text-sm leading-6 text-emerald-50/75 sm:block sm:text-base sm:leading-7">
+            <p className="mt-4 hidden max-w-md text-sm leading-6 text-blue-50/75 sm:block sm:text-base sm:leading-7">
               One focused workspace for the supplies your team needs and the
               orders that keep every site moving.
             </p>
@@ -107,7 +107,7 @@ export function LoginShowcase() {
                 >
                   <motion.span
                     data-testid="login-step-icon"
-                    className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-200 text-brand shadow-lg shadow-black/10 sm:mb-3"
+                    className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-xl bg-sky-200 text-brand shadow-lg shadow-black/10 sm:mb-3"
                     animate={
                       reducedMotion
                         ? undefined
@@ -125,7 +125,7 @@ export function LoginShowcase() {
                   <p className="text-[11px] font-semibold leading-4 sm:text-sm">
                     {step.title}
                   </p>
-                  <p className="mt-1 hidden text-xs leading-5 text-emerald-50/75 sm:block">
+                  <p className="mt-1 hidden text-xs leading-5 text-blue-50/75 sm:block">
                     {step.detail}
                   </p>
                 </motion.li>
@@ -138,7 +138,7 @@ export function LoginShowcase() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.55, duration: 0.4 }}
-          className="hidden items-center gap-2 text-xs text-emerald-50/75 sm:flex"
+          className="hidden items-center gap-2 text-xs text-blue-50/75 sm:flex"
         >
           <CheckCircle2 size={14} aria-hidden="true" />
           Built for cleaners, customers and supply teams

@@ -91,7 +91,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                       t.onAction?.();
                       dismiss(t.id);
                     }}
-                    className="rounded px-2 py-0.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300"
+                    className="rounded px-2 py-0.5 text-xs font-semibold text-blue-400 hover:text-blue-300"
                   >
                     {t.actionLabel}
                   </button>

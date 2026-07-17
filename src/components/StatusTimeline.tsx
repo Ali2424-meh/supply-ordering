@@ -35,7 +35,7 @@ export function StatusTimeline({
           }}
           className="relative mb-4"
         >
-          <span className="absolute -left-[23px] top-1 h-3 w-3 rounded-full bg-emerald-600" />
+          <span className="absolute -left-[23px] top-1 h-3 w-3 rounded-full bg-brand" />
           <p className="text-sm font-medium">{STATUS_LABELS[event.toStatus]}</p>
           <p className="text-xs text-zinc-500">
             {new Date(event.createdAt).toLocaleString("en-AU", {

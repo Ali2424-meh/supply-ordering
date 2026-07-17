@@ -14,7 +14,7 @@ export function WorkerScrollProgress() {
     <motion.div
       data-testid="worker-scroll-progress"
       aria-hidden="true"
-      className="fixed inset-x-0 top-0 z-50 h-1 origin-left bg-gradient-to-r from-emerald-400 via-brand to-teal-300 shadow-[0_0_14px_rgba(16,185,129,0.45)] motion-reduce:hidden"
+      className="fixed inset-x-0 top-0 z-50 h-1 origin-left bg-gradient-to-r from-sky-400 via-brand to-indigo-400 shadow-[0_0_14px_rgba(59,130,246,0.45)] motion-reduce:hidden"
       style={{ scaleX }}
     />
   );

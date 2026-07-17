@@ -50,12 +50,12 @@ export function DashboardHero({
   return (
     <section
       data-testid="dashboard-hero"
-      className="relative isolate overflow-hidden rounded-[1.75rem] bg-brand px-5 py-7 text-white shadow-xl shadow-emerald-950/10 sm:px-8 sm:py-9 lg:min-h-[25rem] lg:px-10 lg:py-10"
+      className="relative isolate overflow-hidden rounded-[1.75rem] bg-brand px-5 py-7 text-white shadow-xl shadow-blue-950/10 sm:px-8 sm:py-9 lg:min-h-[25rem] lg:px-10 lg:py-10"
       aria-labelledby="dashboard-heading"
     >
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(167,243,208,0.22),transparent_33%),linear-gradient(120deg,transparent_48%,rgba(255,255,255,0.06))]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(147,197,253,0.25),transparent_33%),linear-gradient(120deg,transparent_48%,rgba(255,255,255,0.06))]"
       />
       <motion.div
         aria-hidden="true"
@@ -69,7 +69,7 @@ export function DashboardHero({
       />
       <motion.div
         aria-hidden="true"
-        className="absolute -left-24 top-1/2 h-48 w-48 rounded-full bg-emerald-300/5 blur-2xl"
+        className="absolute -left-24 top-1/2 h-48 w-48 rounded-full bg-sky-300/10 blur-2xl"
         animate={{ x: [0, 42, 0], scale: [1, 1.18, 1] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -86,7 +86,7 @@ export function DashboardHero({
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.42 }}
         >
-          <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100">
+          <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-blue-100">
             <Sparkles size={13} aria-hidden="true" />
             Hello, {firstName}
           </p>
@@ -96,7 +96,7 @@ export function DashboardHero({
           >
             Everything you need, one request away.
           </h1>
-          <p className="mt-4 max-w-xl text-sm leading-6 text-emerald-50/80 sm:text-base sm:leading-7">
+          <p className="mt-4 max-w-xl text-sm leading-6 text-blue-50/80 sm:text-base sm:leading-7">
             Find the right supplies, build your order and keep track of every
             request from one simple workspace.
           </p>
@@ -104,7 +104,7 @@ export function DashboardHero({
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Link
               href="/supplies/catalogue"
-              className="group inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-brand shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-md"
+              className="group inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-brand shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-md"
             >
               Browse catalogue
               <ArrowRight
@@ -113,7 +113,7 @@ export function DashboardHero({
                 className="transition-transform group-hover:translate-x-0.5"
               />
             </Link>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-emerald-50/75">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-blue-50/75">
               <span>
                 <strong className="text-sm font-semibold text-white">
                   {totalOrders}
@@ -143,14 +143,14 @@ export function DashboardHero({
           aria-hidden="true"
         >
           <motion.div
-            className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-emerald-200/25 lg:h-52 lg:w-52"
+            className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-sky-200/25 lg:h-52 lg:w-52"
             animate={{ rotate: 360 }}
             transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
           >
-            <span className="absolute -top-1 left-1/2 h-2.5 w-2.5 rounded-full bg-emerald-200 shadow-[0_0_18px_rgba(167,243,208,0.9)]" />
+            <span className="absolute -top-1 left-1/2 h-2.5 w-2.5 rounded-full bg-sky-200 shadow-[0_0_18px_rgba(191,219,254,0.9)]" />
           </motion.div>
           <motion.div
-            className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1.75rem] border border-white/15 bg-white/10 text-emerald-100 shadow-2xl shadow-emerald-950/20 backdrop-blur-md"
+            className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1.75rem] border border-white/15 bg-white/10 text-blue-100 shadow-2xl shadow-blue-950/20 backdrop-blur-md"
             animate={
               reducedMotion
                 ? undefined
@@ -189,9 +189,9 @@ export function DashboardHero({
                         },
                       }
                 }
-                className={`absolute flex w-44 items-center gap-3 rounded-2xl border border-white/15 bg-white/12 p-3 shadow-xl shadow-emerald-950/15 backdrop-blur-md lg:w-48 ${card.className}`}
+                className={`absolute flex w-44 items-center gap-3 rounded-2xl border border-white/15 bg-white/12 p-3 shadow-xl shadow-blue-950/15 backdrop-blur-md lg:w-48 ${card.className}`}
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-200 text-brand">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-200 text-brand">
                   <Icon size={17} strokeWidth={2.2} />
                 </span>
                 <span className="text-xs font-semibold">{card.label}</span>
