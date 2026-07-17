@@ -38,19 +38,40 @@ export async function applyCatalogueLines(
         existingProducts.map((product) => [product.shopifyVariantId!, product]),
       );
 
+      const newLines = uniqueLines.filter(
+        (line) => !existingByVariant.has(line.shopifyVariantId),
+      );
+      if (newLines.length > 0) {
+        const created = await tx.product.createMany({
+          data: newLines.map((line) => ({
+            ...line,
+            active: true,
+            source: "SYNCED" as const,
+          })),
+        });
+        const createdProducts = await tx.product.findMany({
+          where: {
+            shopifyVariantId: {
+              in: newLines.map((line) => line.shopifyVariantId),
+            },
+          },
+          select: { id: true, shopifyVariantId: true },
+        });
+        const priceByVariant = new Map(
+          newLines.map((line) => [line.shopifyVariantId, line.priceCents]),
+        );
+        await tx.priceHistory.createMany({
+          data: createdProducts.map((product) => ({
+            productId: product.id,
+            priceCents: priceByVariant.get(product.shopifyVariantId!)!,
+          })),
+        });
+        added += created.count;
+      }
+
       for (const line of uniqueLines) {
         const existing = existingByVariant.get(line.shopifyVariantId);
-        if (!existing) {
-          await tx.product.create({
-            data: {
-              ...line,
-              active: true,
-              source: "SYNCED",
-              priceHistory: { create: { priceCents: line.priceCents } },
-            },
-          });
-          added += 1;
-        } else if (catalogueChanged(existing, line)) {
+        if (existing && catalogueChanged(existing, line)) {
           await tx.product.update({
             where: { id: existing.id },
             data: { ...line, active: true, source: "SYNCED" },

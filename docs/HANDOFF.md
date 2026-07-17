@@ -197,6 +197,10 @@ reviewed and approved; full suite green after each (lint, typecheck, 24 unit,
   uses a Neon Postgres database in Sydney and keeps deployment credentials out
   of git. Production seed passwords are supplied only to the one-off seed
   command and are not stored as runtime environment variables.
+- The first Neon catalogue bootstrap exposed the cost of thousands of
+  sequential product inserts and rolled back cleanly at the transaction guard.
+  New synced products and their initial price history are now bulk-created in
+  the same atomic transaction; the focused sync suite, lint, and typecheck pass.
 - Claude Code 2.1.169 was explicitly asked for an independent review of this
   pass, but its account session remained limited until 5pm Asia/Manila and it
   returned no findings. No Claude approval is claimed for this pass.
