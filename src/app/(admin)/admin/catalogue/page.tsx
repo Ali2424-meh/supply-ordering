@@ -10,6 +10,7 @@ import { requireRole } from "@/lib/guards";
 import { pageCount, parsePage } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 import { supplyEnabled } from "@/lib/settings";
+import { btn, input } from "@/lib/ui";
 
 const PAGE_SIZE = 50;
 
@@ -78,10 +79,7 @@ export default async function AdminCataloguePage({
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Product catalogue</h1>
-        <Link
-          href="/admin/catalogue/new"
-          className="min-h-10 rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white shadow-sm"
-        >
+        <Link href="/admin/catalogue/new" className={btn("primary", "md")}>
           New product
         </Link>
       </div>
@@ -96,7 +94,7 @@ export default async function AdminCataloguePage({
             defaultValue={q}
             placeholder="Search name, variant, SKU or category…"
             maxLength={200}
-            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+            className={input()}
           />
         </label>
         <label>
@@ -104,7 +102,7 @@ export default async function AdminCataloguePage({
           <select
             name="state"
             defaultValue={state}
-            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+            className={input()}
           >
             <option value="">All states</option>
             <option value="active">Active</option>
@@ -116,16 +114,14 @@ export default async function AdminCataloguePage({
           <select
             name="sort"
             defaultValue={sort}
-            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+            className={input()}
           >
             <option value="name">Name</option>
             <option value="category">Category</option>
             <option value="price">Price</option>
           </select>
         </label>
-        <button className="min-h-10 rounded-lg bg-zinc-900 px-3 font-medium text-white shadow-sm">
-          Apply
-        </button>
+        <button className={btn("primary", "md")}>Apply</button>
       </Form>
       {products.length === 0 ? (
         <EmptyState title="No products found" />
@@ -153,7 +149,7 @@ export default async function AdminCataloguePage({
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs">
                     <span
-                      className={`rounded-full px-2 py-0.5 ${product.active ? "bg-emerald-100 text-emerald-800" : "bg-zinc-200 text-zinc-600"}`}
+                      className={`rounded-full px-2 py-0.5 ${product.active ? "bg-brand-tint text-brand-deep" : "bg-zinc-200 text-zinc-600"}`}
                     >
                       {product.active ? "Active" : "Inactive"}
                     </span>
@@ -199,7 +195,7 @@ export default async function AdminCataloguePage({
                     </td>
                     <td className="px-3">
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${product.active ? "bg-emerald-100 text-emerald-800" : "bg-zinc-200 text-zinc-600"}`}
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${product.active ? "bg-brand-tint text-brand-deep" : "bg-zinc-200 text-zinc-600"}`}
                       >
                         {product.active ? "Active" : "Inactive"}
                       </span>

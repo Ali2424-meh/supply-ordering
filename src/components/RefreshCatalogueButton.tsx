@@ -43,7 +43,7 @@ export function RefreshCatalogueButton() {
       {message && (
         <p
           role="status"
-          className={`text-sm ${message.ok ? "text-emerald-700" : "text-red-600"}`}
+          className={`text-sm ${message.ok ? "text-brand" : "text-red-600"}`}
         >
           {message.text}
         </p>

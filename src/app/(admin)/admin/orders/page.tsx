@@ -12,6 +12,7 @@ import { pageCount, parsePage } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 import { supplyEnabled } from "@/lib/settings";
 import { STATUS_LABELS, STATUS_ORDER, statusDotClass } from "@/lib/statuses";
+import { btn, input } from "@/lib/ui";
 
 const PAGE_SIZE = 50;
 
@@ -156,7 +157,7 @@ export default async function AdminOrdersPage({
             defaultValue={q}
             placeholder="Search order #, worker or email…"
             maxLength={200}
-            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+            className={input()}
           />
         </label>
         <label>
@@ -164,7 +165,7 @@ export default async function AdminOrdersPage({
           <select
             name="status"
             defaultValue={status}
-            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+            className={input()}
           >
             <option value="">All statuses</option>
             {STATUS_ORDER.map((item) => (
@@ -179,16 +180,14 @@ export default async function AdminOrdersPage({
           <select
             name="sort"
             defaultValue={sort}
-            className="min-h-10 w-full rounded-lg border border-zinc-300 bg-white p-2 shadow-sm"
+            className={input()}
           >
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
             <option value="total">Highest total</option>
           </select>
         </label>
-        <button className="min-h-10 rounded-lg bg-zinc-900 px-3 font-medium text-white shadow-sm">
-          Apply
-        </button>
+        <button className={btn("primary", "md")}>Apply</button>
       </Form>
       {orders.length === 0 ? (
         <EmptyState title="No matching orders" />

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { CheckCircle2, UserRound } from "lucide-react";
 import { updateAccount } from "@/actions/account";
+import { btn, input } from "@/lib/ui";
 
 export function AccountForm({
   name,
@@ -38,7 +39,7 @@ export function AccountForm({
             required
             maxLength={100}
             autoComplete="name"
-            className="min-h-11 rounded-lg border border-zinc-300 bg-white px-3 font-normal shadow-sm"
+            className={input()}
           />
         </label>
         <label className="grid gap-1.5 text-sm font-medium text-zinc-700">
@@ -62,7 +63,7 @@ export function AccountForm({
             maxLength={40}
             autoComplete="tel"
             placeholder="Optional"
-            className="min-h-11 rounded-lg border border-zinc-300 bg-white px-3 font-normal shadow-sm"
+            className={input()}
           />
         </label>
 
@@ -74,7 +75,7 @@ export function AccountForm({
             role="status"
             aria-live="polite"
             aria-atomic="true"
-            className="flex items-center gap-1.5 text-sm text-emerald-700"
+            className="flex items-center gap-1.5 text-sm text-brand"
           >
             {!pending && state.ok ? (
               <>
@@ -87,7 +88,7 @@ export function AccountForm({
 
         <button
           disabled={pending}
-          className="min-h-11 rounded-lg bg-brand px-4 font-medium text-white shadow-sm transition hover:bg-brand-hover disabled:opacity-60 sm:w-fit"
+          className={`${btn("primary", "md")} sm:w-fit`}
         >
           {pending ? "Saving…" : "Save changes"}
         </button>

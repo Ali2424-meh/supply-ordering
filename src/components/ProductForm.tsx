@@ -7,6 +7,7 @@ import {
   productInputSchema,
   type ProductInput,
 } from "@/lib/product-schema";
+import { btn } from "@/lib/ui";
 
 type Props = { productId?: string; initial?: Partial<ProductInput> };
 
@@ -168,7 +169,7 @@ export function ProductForm({ productId, initial = {} }: Props) {
       )}
       <button
         disabled={pending}
-        className="min-h-11 rounded bg-zinc-900 py-2 font-medium text-white disabled:opacity-60"
+        className={btn("primary", "md")}
       >
         {pending ? "Saving…" : "Save product"}
       </button>

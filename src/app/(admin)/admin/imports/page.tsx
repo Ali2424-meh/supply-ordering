@@ -36,7 +36,7 @@ export default async function ImportsPage() {
                     })}
                   </p>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${run.status === "SUCCEEDED" ? "bg-emerald-100 text-emerald-800" : run.status === "FAILED" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${run.status === "SUCCEEDED" ? "bg-brand-tint text-brand-deep" : run.status === "FAILED" ? "bg-danger-tint text-danger" : "bg-warning-tint text-warning"}`}
                   >
                     {run.status}
                   </span>
@@ -75,7 +75,7 @@ export default async function ImportsPage() {
                       })}
                     </td>
                     <td className="px-3">
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${run.status === "SUCCEEDED" ? "bg-emerald-100 text-emerald-800" : run.status === "FAILED" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${run.status === "SUCCEEDED" ? "bg-brand-tint text-brand-deep" : run.status === "FAILED" ? "bg-danger-tint text-danger" : "bg-warning-tint text-warning"}`}>
                         {run.status}
                       </span>
                     </td>

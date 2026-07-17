@@ -3,6 +3,7 @@ import { toggleSupplyAction } from "@/actions/settings";
 import { PendingSubmitButton } from "@/components/PendingSubmitButton";
 import { requireRole } from "@/lib/guards";
 import { supplyEnabled } from "@/lib/settings";
+import { btn } from "@/lib/ui";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -18,7 +19,7 @@ export default async function SettingsPage() {
         </p>
         <PendingSubmitButton
           pendingLabel="Saving…"
-          className="min-h-10 rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white shadow-sm disabled:opacity-60"
+          className={btn("primary", "md")}
         >
           {enabled ? "Disable" : "Enable"} supply ordering
         </PendingSubmitButton>
