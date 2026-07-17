@@ -14,26 +14,42 @@ export const STATUS_LABELS: Record<OrderStatus, string> = {
 
 export const STATUS_ORDER = Object.keys(STATUS_LABELS) as OrderStatus[];
 
-export const STATUS_COLORS: Record<OrderStatus, string> = {
-  SUBMITTED: "bg-blue-100 text-blue-800",
-  CONTACTED: "bg-sky-100 text-sky-800",
-  AWAITING_PAYMENT: "bg-amber-100 text-amber-800",
-  PAID: "bg-emerald-100 text-emerald-800",
-  ORDERED_FROM_SUPPLIER: "bg-violet-100 text-violet-800",
-  READY_FOR_COLLECTION: "bg-teal-100 text-teal-800",
-  DELIVERED_COLLECTED: "bg-green-100 text-green-800",
-  CANCELLED: "bg-zinc-200 text-zinc-700",
-  ISSUE_ON_HOLD: "bg-red-100 text-red-800",
-};
-
 /**
- * Derives a dot color class from a STATUS_COLORS entry.
- * e.g. "bg-blue-100 text-blue-800" → "bg-blue-500"
+ * Full literal class lists per status — Tailwind's scanner cannot see
+ * interpolated class names, so every dot/pill string must appear verbatim.
+ * Palette rule: cool blue-family hues while an order is in motion, amber for
+ * waiting-on-payment, deep brand blue for terminal success, zinc/red for
+ * cancelled/problem. No greens — success is brand-blue app-wide.
  */
+export const STATUS_STYLES: Record<OrderStatus, { dot: string; pill: string }> =
+  {
+    SUBMITTED: { dot: "bg-blue-500", pill: "bg-blue-50 text-blue-800" },
+    CONTACTED: { dot: "bg-sky-500", pill: "bg-sky-50 text-sky-800" },
+    AWAITING_PAYMENT: {
+      dot: "bg-amber-500",
+      pill: "bg-amber-50 text-amber-800",
+    },
+    PAID: { dot: "bg-indigo-500", pill: "bg-indigo-50 text-indigo-800" },
+    ORDERED_FROM_SUPPLIER: {
+      dot: "bg-violet-500",
+      pill: "bg-violet-50 text-violet-800",
+    },
+    READY_FOR_COLLECTION: {
+      dot: "bg-cyan-500",
+      pill: "bg-cyan-50 text-cyan-800",
+    },
+    DELIVERED_COLLECTED: {
+      dot: "bg-blue-700",
+      pill: "bg-blue-100 text-blue-900",
+    },
+    CANCELLED: { dot: "bg-zinc-400", pill: "bg-zinc-100 text-zinc-600" },
+    ISSUE_ON_HOLD: { dot: "bg-red-500", pill: "bg-red-50 text-red-800" },
+  };
+
 export function statusDotClass(status: OrderStatus): string {
-  const colorClass = STATUS_COLORS[status];
-  const match = colorClass.match(/bg-(\w+-\d+)/);
-  if (!match) return "bg-zinc-400";
-  const base = match[1].replace(/-\d+$/, "");
-  return `bg-${base}-500`;
+  return STATUS_STYLES[status].dot;
+}
+
+export function statusPillClass(status: OrderStatus): string {
+  return STATUS_STYLES[status].pill;
 }

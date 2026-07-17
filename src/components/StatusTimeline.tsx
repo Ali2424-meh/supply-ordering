@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import type { OrderStatus } from "@prisma/client";
-import { STATUS_LABELS } from "@/lib/statuses";
+import { STATUS_LABELS, STATUS_STYLES } from "@/lib/statuses";
 
 export type TimelineEvent = {
   id: string;
@@ -35,7 +35,9 @@ export function StatusTimeline({
           }}
           className="relative mb-4"
         >
-          <span className="absolute -left-[23px] top-1 h-3 w-3 rounded-full bg-brand" />
+          <span
+            className={`absolute -left-[23px] top-1 h-3 w-3 rounded-full ring-2 ring-white ${STATUS_STYLES[event.toStatus].dot}`}
+          />
           <p className="text-sm font-medium">{STATUS_LABELS[event.toStatus]}</p>
           <p className="text-xs text-zinc-500">
             {new Date(event.createdAt).toLocaleString("en-AU", {

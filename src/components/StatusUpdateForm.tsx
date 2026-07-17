@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import type { OrderStatus } from "@prisma/client";
 import { updateOrderStatus } from "@/actions/orders";
-import { STATUS_LABELS, STATUS_ORDER, STATUS_COLORS, statusDotClass } from "@/lib/statuses";
+import { STATUS_LABELS, STATUS_ORDER, statusDotClass, statusPillClass } from "@/lib/statuses";
+import { btn } from "@/lib/ui";
 
 export function StatusUpdateForm({
   orderId,
@@ -43,7 +44,7 @@ export function StatusUpdateForm({
         <div className="flex flex-wrap gap-2">
           {STATUS_ORDER.map((s) => {
             const selected = status === s;
-            const colorClass = STATUS_COLORS[s];
+            const colorClass = statusPillClass(s);
             const dot = statusDotClass(s);
             return (
               <label
@@ -89,7 +90,7 @@ export function StatusUpdateForm({
         whileTap={{ scale: 0.97 }}
         disabled={pending}
         onClick={save}
-        className="min-h-10 w-full rounded-lg bg-zinc-900 py-2 text-sm font-medium text-white disabled:opacity-60"
+        className={`${btn("primary", "md")} w-full`}
       >
         {pending ? "Saving…" : "Save"}
       </motion.button>
