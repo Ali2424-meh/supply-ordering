@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/PageHeader";
 import { ProductForm } from "@/components/ProductForm";
 import { requireRole } from "@/lib/guards";
 import { supplyEnabled } from "@/lib/settings";
@@ -8,7 +9,11 @@ export default async function NewProductPage() {
   if (!(await supplyEnabled())) notFound();
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold">New product</h1>
+      <PageHeader
+        eyebrow="Supply"
+        title="New product"
+        description="Manually added products live alongside items synced from the store."
+      />
       <ProductForm />
     </div>
   );

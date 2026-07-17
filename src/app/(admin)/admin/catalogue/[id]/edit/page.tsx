@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/PageHeader";
 import { ProductForm } from "@/components/ProductForm";
 import { requireRole } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
@@ -16,9 +17,9 @@ export default async function EditProductPage({
   if (!product) notFound();
   return (
     <div>
-      <h1 className="mb-1 text-xl font-semibold">Edit {product.name}</h1>
+      <PageHeader eyebrow="Supply" title={`Edit ${product.name}`} />
       {product.source === "SYNCED" && (
-        <p className="mb-4 text-xs text-amber-700">
+        <p className="mb-4 max-w-2xl rounded-lg border border-amber-200 bg-warning-tint px-3 py-2 text-xs text-warning">
           Synced from the external store — the next catalogue refresh will
           reassert store data.
         </p>

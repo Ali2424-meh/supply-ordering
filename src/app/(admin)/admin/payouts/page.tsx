@@ -1,6 +1,19 @@
+import { DollarSign } from "lucide-react";
+import { ComingSoon } from "@/components/ComingSoon";
 import { requireRole } from "@/lib/guards";
 
 export default async function PayoutsPage() {
   await requireRole("ADMIN");
-  return <p className="text-zinc-500">Payouts — coming soon.</p>;
+  return (
+    <ComingSoon
+      icon={DollarSign}
+      title="Payouts"
+      description="Worker payment runs and statements."
+      rows={[
+        "Payout runs and approvals",
+        "Per-worker statements",
+        "Export for accounting",
+      ]}
+    />
+  );
 }
