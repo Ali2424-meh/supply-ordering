@@ -18,6 +18,12 @@ test("C-01: cleaner with feature enabled sees Supplies", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "Browse catalogue" }),
   ).toHaveAttribute("href", "/supplies/catalogue");
+  await page.getByTestId("supply-journey").scrollIntoViewIfNeeded();
+  await expect(
+    page.getByRole("heading", {
+      name: "One request. A clear path from cart to site.",
+    }),
+  ).toBeVisible();
 });
 
 test("C-02: feature disabled hides Supplies", async ({ page }) => {
@@ -112,6 +118,9 @@ test("C-07 + C-08: own orders only; detail is read-only", async ({ page }) => {
   await page.goto("/supplies");
   await expect(page.getByTestId("order-card").first()).toBeVisible();
   await page.getByTestId("order-card").first().getByRole("link").click();
+  await expect(page).toHaveURL(/\/supplies\/orders\/[^/]+$/, {
+    timeout: 15_000,
+  });
   await expect(page.getByTestId("status-timeline")).toBeVisible();
   await expect(page.getByTestId("status-select")).toHaveCount(0);
   await page.context().clearCookies();

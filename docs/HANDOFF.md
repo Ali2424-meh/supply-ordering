@@ -155,6 +155,23 @@ reviewed and approved; full suite green after each (lint, typecheck, 24 unit,
   Claude session should review this animation commit from the recorded clean
   baseline.
 
+### Wide-screen and scroll experience follow-up
+
+- Expanded the Cleaner portal from a narrow 896px shell to a responsive 1536px
+  competition-display canvas, with the catalogue growing to six useful columns
+  instead of stretching product cards across the added space.
+- Enriched the Cleaner hero with a live product count, animated orbital supply
+  composition, ambient light sweep, and clearer large-screen typography.
+- Added a reduced-motion-aware scroll progress indicator, one-time section
+  reveals, and an animated three-stage request journey that reinforces the
+  offline-payment workflow without introducing any new product capability.
+- Inspected the 1920px top/scroll states and 390px top/journey states. Lint,
+  typecheck, 24 unit, 44 integration, and 22 Playwright scenarios pass; the
+  optimized production build passes.
+- Claude Code review was requested for this follow-up, but its session remained
+  limited until 12pm Asia/Manila and returned no verdict. Re-review this commit
+  in the next Claude session; no Claude approval is claimed here.
+
 ## Deferred minor findings (triage at final review)
 
 - `OrderItem.productId` deliberately has no FK constraint (snapshot design) —

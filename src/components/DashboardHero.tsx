@@ -5,6 +5,7 @@ import {
   ArrowRight,
   ClipboardCheck,
   PackageOpen,
+  Package,
   ShoppingBag,
   Sparkles,
 } from "lucide-react";
@@ -20,7 +21,7 @@ const supplyCards = [
   {
     icon: PackageOpen,
     label: "Site supplies",
-    className: "left-1 top-[4.3rem] -rotate-[3deg]",
+    className: "-left-6 top-[5.25rem] -rotate-[3deg]",
     delay: 0.55,
   },
   {
@@ -35,19 +36,21 @@ interface DashboardHeroProps {
   firstName: string;
   totalOrders: number;
   cartCount: number;
+  productCount: number;
 }
 
 export function DashboardHero({
   firstName,
   totalOrders,
   cartCount,
+  productCount,
 }: DashboardHeroProps) {
   const reducedMotion = useReducedMotion();
 
   return (
     <section
       data-testid="dashboard-hero"
-      className="relative isolate overflow-hidden rounded-[1.5rem] bg-brand px-5 py-6 text-white shadow-lg shadow-emerald-950/10 sm:px-7 sm:py-7"
+      className="relative isolate overflow-hidden rounded-[1.75rem] bg-brand px-5 py-7 text-white shadow-xl shadow-emerald-950/10 sm:px-8 sm:py-9 lg:min-h-[25rem] lg:px-10 lg:py-10"
       aria-labelledby="dashboard-heading"
     >
       <div
@@ -64,8 +67,20 @@ export function DashboardHero({
         }
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
+      <motion.div
+        aria-hidden="true"
+        className="absolute -left-24 top-1/2 h-48 w-48 rounded-full bg-emerald-300/5 blur-2xl"
+        animate={{ x: [0, 42, 0], scale: [1, 1.18, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-y-0 -left-1/3 w-1/4 skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/8 to-transparent"
+        animate={{ x: ["0%", "650%"] }}
+        transition={{ duration: 8, repeat: Infinity, repeatDelay: 2.5, ease: "easeInOut" }}
+      />
 
-      <div className="relative z-10 grid items-center gap-7 md:grid-cols-[minmax(0,1fr)_14.5rem]">
+      <div className="relative z-10 grid h-full items-center gap-7 md:grid-cols-[minmax(0,1fr)_17rem] lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
         <motion.div
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
@@ -77,11 +92,11 @@ export function DashboardHero({
           </p>
           <h1
             id="dashboard-heading"
-            className="max-w-xl text-3xl font-semibold leading-[1.08] tracking-[-0.035em] sm:text-[2.5rem]"
+            className="max-w-2xl text-3xl font-semibold leading-[1.05] tracking-[-0.04em] sm:text-[2.7rem] lg:text-5xl"
           >
             Everything you need, one request away.
           </h1>
-          <p className="mt-3 max-w-lg text-sm leading-6 text-emerald-50/75">
+          <p className="mt-4 max-w-xl text-sm leading-6 text-emerald-50/80 sm:text-base sm:leading-7">
             Find the right supplies, build your order and keep track of every
             request from one simple workspace.
           </p>
@@ -98,7 +113,7 @@ export function DashboardHero({
                 className="transition-transform group-hover:translate-x-0.5"
               />
             </Link>
-            <div className="flex items-center gap-3 text-xs text-emerald-50/70">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-emerald-50/75">
               <span>
                 <strong className="text-sm font-semibold text-white">
                   {totalOrders}
@@ -112,14 +127,39 @@ export function DashboardHero({
                 </strong>{" "}
                 in cart
               </span>
+              <span aria-hidden="true" className="h-4 w-px bg-white/20" />
+              <span>
+                <strong className="text-sm font-semibold text-white">
+                  {productCount.toLocaleString("en-AU")}
+                </strong>{" "}
+                products
+              </span>
             </div>
           </div>
         </motion.div>
 
         <div
-          className="relative hidden h-48 md:block"
+          className="relative hidden h-64 md:block"
           aria-hidden="true"
         >
+          <motion.div
+            className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-emerald-200/25 lg:h-52 lg:w-52"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+          >
+            <span className="absolute -top-1 left-1/2 h-2.5 w-2.5 rounded-full bg-emerald-200 shadow-[0_0_18px_rgba(167,243,208,0.9)]" />
+          </motion.div>
+          <motion.div
+            className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1.75rem] border border-white/15 bg-white/10 text-emerald-100 shadow-2xl shadow-emerald-950/20 backdrop-blur-md"
+            animate={
+              reducedMotion
+                ? undefined
+                : { scale: [1, 1.06, 1], rotate: [0, 2, 0, -2, 0] }
+            }
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Package size={31} strokeWidth={1.7} />
+          </motion.div>
           {supplyCards.map((card, index) => {
             const Icon = card.icon;
             return (
@@ -149,7 +189,7 @@ export function DashboardHero({
                         },
                       }
                 }
-                className={`absolute flex w-44 items-center gap-3 rounded-2xl border border-white/15 bg-white/12 p-3 shadow-xl shadow-emerald-950/15 backdrop-blur-md ${card.className}`}
+                className={`absolute flex w-44 items-center gap-3 rounded-2xl border border-white/15 bg-white/12 p-3 shadow-xl shadow-emerald-950/15 backdrop-blur-md lg:w-48 ${card.className}`}
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-200 text-brand">
                   <Icon size={17} strokeWidth={2.2} />

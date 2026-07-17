@@ -4,6 +4,7 @@ import { signOutAction } from "@/actions/auth";
 import { Brand } from "@/components/Brand";
 import { CartBadge } from "@/components/CartBadge";
 import { NavLink } from "@/components/NavLink";
+import { WorkerScrollProgress } from "@/components/WorkerScrollProgress";
 import { requireRole } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
 import { supplyEnabled } from "@/lib/settings";
@@ -18,8 +19,9 @@ export default async function WorkerLayout({
   const cartCount = await prisma.cartItem.count({ where: { userId: user.id } });
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-4xl" style={{ background: "var(--color-paper)" }}>
-      <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 bg-white/95 p-3 shadow-sm backdrop-blur sm:rounded-b-xl sm:p-4">
+    <div className="mx-auto min-h-screen w-full max-w-[96rem]" style={{ background: "var(--color-paper)" }}>
+      <WorkerScrollProgress />
+      <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 bg-white/95 p-3 shadow-sm backdrop-blur sm:rounded-b-2xl sm:p-4 lg:px-6">
         <div className="flex items-center gap-4">
           <Brand variant="header" />
           <nav aria-label="Worker" className="flex items-center gap-1 text-sm font-medium">
@@ -37,7 +39,7 @@ export default async function WorkerLayout({
           </form>
         </div>
       </header>
-      <main className="p-3 pb-8 sm:p-5 sm:pb-10">{children}</main>
+      <main className="p-3 pb-10 sm:p-5 sm:pb-12 lg:p-7 lg:pb-14">{children}</main>
     </div>
   );
 }

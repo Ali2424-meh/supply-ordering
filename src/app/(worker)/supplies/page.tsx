@@ -5,7 +5,9 @@ import { EmptyState } from "@/components/EmptyState";
 import { DashboardHero } from "@/components/DashboardHero";
 import { Pagination } from "@/components/Pagination";
 import { ReorderButton } from "@/components/ReorderButton";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { StatusBadge } from "@/components/StatusBadge";
+import { SupplyJourney } from "@/components/SupplyJourney";
 import { formatAud } from "@/lib/format";
 import { requireRole } from "@/lib/guards";
 import { pageCount, parsePage } from "@/lib/pagination";
@@ -23,7 +25,7 @@ export default async function SuppliesHome({
   const user = await requireRole("CLEANER");
   const requestedPage = parsePage((await searchParams).page);
 
-  const [total, cartCount, categories] = await Promise.all([
+  const [total, cartCount, categories, productCount] = await Promise.all([
     prisma.order.count({ where: { userId: user.id } }),
     prisma.cartItem.count({ where: { userId: user.id } }),
     prisma.product.findMany({
@@ -33,6 +35,7 @@ export default async function SuppliesHome({
       orderBy: { category: "asc" },
       take: 6,
     }),
+    prisma.product.count({ where: { active: true } }),
   ]);
 
   const totalPages = pageCount(total, PAGE_SIZE);
@@ -52,27 +55,30 @@ export default async function SuppliesHome({
         firstName={firstName}
         totalOrders={total}
         cartCount={cartCount}
+        productCount={productCount}
       />
 
       {/* Resume-cart card (shown only when cart has items) */}
       {cartCount > 0 && (
-        <Link
-          href="/supplies/cart"
-          className="flex items-center gap-3 rounded-xl border border-brand/20 bg-brand-tint p-4 shadow-sm transition hover:border-brand/40 hover:shadow"
-        >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-white">
-            <ShoppingCart size={18} aria-hidden="true" />
-          </span>
-          <div className="min-w-0">
-            <p className="font-semibold text-brand">You have {cartCount} item{cartCount !== 1 ? "s" : ""} in your cart</p>
-            <p className="text-sm text-zinc-600">Continue where you left off →</p>
-          </div>
-        </Link>
+        <ScrollReveal>
+          <Link
+            href="/supplies/cart"
+            className="group flex items-center gap-3 rounded-2xl border border-brand/20 bg-brand-tint p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md"
+          >
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-sm transition-transform group-hover:rotate-[-7deg] group-hover:scale-105">
+              <ShoppingCart size={19} aria-hidden="true" />
+            </span>
+            <div className="min-w-0">
+              <p className="font-semibold text-brand">You have {cartCount} item{cartCount !== 1 ? "s" : ""} in your cart</p>
+              <p className="text-sm text-zinc-600">Continue where you left off →</p>
+            </div>
+          </Link>
+        </ScrollReveal>
       )}
 
       {/* Category shortcut chips */}
       {categories.length > 0 && (
-        <div>
+        <ScrollReveal delay={0.04}>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-400">Browse by category</p>
           <div className="flex flex-wrap gap-2">
             {categories.map((item) => (
@@ -92,11 +98,11 @@ export default async function SuppliesHome({
               View all →
             </Link>
           </div>
-        </div>
+        </ScrollReveal>
       )}
 
       {/* Order list */}
-      <div>
+      <ScrollReveal delay={0.06}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-base font-semibold">My orders</h2>
           <Link
@@ -158,7 +164,9 @@ export default async function SuppliesHome({
             />
           </>
         )}
-      </div>
+      </ScrollReveal>
+
+      <SupplyJourney />
     </div>
   );
 }
