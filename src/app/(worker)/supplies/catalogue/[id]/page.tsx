@@ -8,6 +8,7 @@ import {
   Tag,
 } from "lucide-react";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { ProductVariantPicker } from "@/components/ProductVariantPicker";
 import { formatAud } from "@/lib/format";
 import { requireRole } from "@/lib/guards";
 import { prisma } from "@/lib/prisma";
@@ -68,7 +69,7 @@ export default async function ProductPage({
   return (
     <article>
       {/* Breadcrumb */}
-      <nav className="mb-4 text-xs text-zinc-400">
+      <nav className="mb-4 flex min-w-0 items-center text-xs text-zinc-400">
         <Link href="/supplies/catalogue" className="hover:text-brand hover:underline">
           Catalogue
         </Link>
@@ -84,10 +85,10 @@ export default async function ProductPage({
           </>
         )}
         <span className="mx-1.5">›</span>
-        <span className="text-zinc-600">{product.name}</span>
+        <span className="truncate text-zinc-600">{product.name}</span>
       </nav>
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10">
+      <div className="grid items-start gap-6 md:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] md:gap-8 lg:gap-10">
         {/* Gallery panel */}
         <div className={`${panel()} p-4 sm:p-6`}>
           <div className="rounded-xl bg-gradient-to-br from-brand-tint via-white to-zinc-50 p-6">
@@ -144,31 +145,11 @@ export default async function ProductPage({
           </p>
 
           {variants.length > 1 && (
-            <div className="mt-5 border-t border-zinc-100 pt-4">
-              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-                Choose a variant
-              </p>
-              <ul className="flex flex-wrap gap-1.5">
-                {variants.map((variant) => {
-                  const isCurrent = variant.id === product.id;
-                  return (
-                    <li key={variant.id}>
-                      <Link
-                        href={`/supplies/catalogue/${variant.id}`}
-                        aria-current={isCurrent ? "page" : undefined}
-                        className={`inline-flex min-h-9 items-center rounded-full border px-3 py-1.5 text-sm transition ${
-                          isCurrent
-                            ? "border-brand bg-brand text-white"
-                            : "border-zinc-200 bg-white text-zinc-700 hover:border-brand/40 hover:text-brand"
-                        }`}
-                      >
-                        {variant.variantName ?? "Standard"}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+            <ProductVariantPicker
+              productName={product.name}
+              currentId={product.id}
+              variants={variants}
+            />
           )}
 
           <div className="mt-5">
@@ -199,7 +180,7 @@ export default async function ProductPage({
       </div>
 
       {/* Details + specifications */}
-      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="mt-8 grid items-start gap-6 md:grid-cols-[2fr_1fr]">
         <section className={`${panel()} p-5 sm:p-6`} aria-labelledby="details-heading">
           <h2 id="details-heading" className="mb-2 text-base font-semibold">
             Details

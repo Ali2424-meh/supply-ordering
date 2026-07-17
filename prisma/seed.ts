@@ -14,11 +14,19 @@ const USERS: Array<{ name: string; email: string; role: Role; disabled?: boolean
 ];
 
 async function main() {
-  const passwordHash = await bcrypt.hash("password123", 10);
+  const configuredPassword = process.env.SEED_PASSWORD?.trim();
+  if (process.env.VERCEL_ENV === "production" && !configuredPassword) {
+    throw new Error("SEED_PASSWORD is required when seeding production.");
+  }
+  const passwordHash = await bcrypt.hash(configuredPassword ?? "password123", 10);
   for (const u of USERS) {
     await prisma.user.upsert({
       where: { email: u.email },
-      update: { role: u.role, disabled: u.disabled ?? false },
+      update: {
+        role: u.role,
+        disabled: u.disabled ?? false,
+        ...(configuredPassword ? { passwordHash } : {}),
+      },
       create: { ...u, disabled: u.disabled ?? false, passwordHash },
     });
   }

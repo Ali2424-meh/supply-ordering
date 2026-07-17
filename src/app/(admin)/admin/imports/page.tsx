@@ -28,11 +28,11 @@ export default async function ImportsPage() {
         <EmptyState title="No imports yet" />
       ) : (
         <>
-          <ul className="grid gap-2 md:hidden">
+          <ul className="divide-y divide-zinc-100 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm sm:hidden">
             {runs.map((run) => (
               <li
                 key={run.id}
-                className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm"
+                className="p-3"
               >
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-medium">
@@ -59,16 +59,17 @@ export default async function ImportsPage() {
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm md:block">
-            <table className="w-full min-w-4xl text-sm">
+          <div className="hidden overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm sm:block">
+            <table className="w-full table-fixed text-sm">
               <thead className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
                 <tr>
                   <th scope="col" className="py-3 pl-4 pr-3">Started</th>
                   <th scope="col" className="px-3">Status</th>
-                  <th scope="col" className="px-3">Added</th>
-                  <th scope="col" className="px-3">Updated</th>
-                  <th scope="col" className="px-3">Deactivated</th>
-                  <th scope="col" className="py-3 pl-3 pr-4">Error</th>
+                  <th scope="col" className="px-3 xl:hidden">Changes</th>
+                  <th scope="col" className="hidden px-3 xl:table-cell">Added</th>
+                  <th scope="col" className="hidden px-3 xl:table-cell">Updated</th>
+                  <th scope="col" className="hidden px-3 xl:table-cell">Deactivated</th>
+                  <th scope="col" className="hidden py-3 pl-3 pr-4 xl:table-cell">Error</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -84,10 +85,18 @@ export default async function ImportsPage() {
                         {run.status}
                       </span>
                     </td>
-                    <td className="px-3 font-medium">{run.added}</td>
-                    <td className="px-3 font-medium">{run.updated}</td>
-                    <td className="px-3 font-medium">{run.deactivated}</td>
-                    <td className="max-w-sm break-words py-3 pl-3 pr-4 text-red-600">
+                    <td className="px-3 text-xs text-zinc-600 xl:hidden">
+                      +{run.added} · {run.updated} updated · {run.deactivated} inactive
+                      {run.errorMessage && (
+                        <span className="mt-1 block break-words text-danger">
+                          {run.errorMessage}
+                        </span>
+                      )}
+                    </td>
+                    <td className="hidden px-3 font-medium xl:table-cell">{run.added}</td>
+                    <td className="hidden px-3 font-medium xl:table-cell">{run.updated}</td>
+                    <td className="hidden px-3 font-medium xl:table-cell">{run.deactivated}</td>
+                    <td className="hidden max-w-sm break-words py-3 pl-3 pr-4 text-red-600 xl:table-cell">
                       {run.errorMessage ?? ""}
                     </td>
                   </tr>

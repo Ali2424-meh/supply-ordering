@@ -21,14 +21,12 @@ export default async function WorkerLayout({
   return (
     <div className="mx-auto min-h-screen w-full max-w-7xl" style={{ background: "var(--color-paper)" }}>
       <WorkerScrollProgress />
-      <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 bg-white/95 p-3 shadow-sm backdrop-blur sm:rounded-b-2xl sm:p-4 lg:px-6">
-        <div className="flex items-center gap-4">
-          <Brand variant="header" />
-          <nav aria-label="Worker" className="flex items-center gap-1 text-sm font-medium">
-            <NavLink href="/supplies" exact icon={<Home size={15} aria-hidden="true" />}>Supplies</NavLink>
-            <NavLink href="/supplies/catalogue" icon={<ShoppingBag size={15} aria-hidden="true" />}>Catalogue</NavLink>
-          </nav>
-        </div>
+      <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 bg-white/95 p-3 shadow-sm backdrop-blur sm:flex-nowrap sm:rounded-b-2xl sm:p-4 lg:px-6">
+        <Brand variant="header" />
+        <nav aria-label="Worker" className="order-3 flex w-full items-center gap-1 border-t border-zinc-100 pt-2 text-sm font-medium sm:order-none sm:w-auto sm:border-0 sm:pt-0">
+          <NavLink href="/supplies" exact icon={<Home size={15} aria-hidden="true" />}>Supplies</NavLink>
+          <NavLink href="/supplies/catalogue" icon={<ShoppingBag size={15} aria-hidden="true" />}>Catalogue</NavLink>
+        </nav>
         <div className="flex items-center gap-2">
           <CartBadge count={cartCount} />
           <form action={signOutAction}>

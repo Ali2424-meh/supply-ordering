@@ -27,7 +27,7 @@ export function Pagination({
   totalItems: number;
   pageSize: number;
 }) {
-  if (totalItems === 0) return null;
+  if (totalItems === 0 || totalPages <= 1) return null;
   const first = (page - 1) * pageSize + 1;
   const last = Math.min(page * pageSize, totalItems);
   const linkClass =
@@ -36,20 +36,22 @@ export function Pagination({
   return (
     <nav
       aria-label="Pagination"
-      className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-4"
+      className="mt-6 flex items-center justify-between gap-3 border-t pt-4"
     >
-      <p className="text-sm text-zinc-500">
+      <p className="hidden text-sm text-zinc-500 sm:block">
         Showing {first.toLocaleString()}–{last.toLocaleString()} of{" "}
         {totalItems.toLocaleString()}
       </p>
-      <div className="flex items-center gap-2">
+      <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-start">
         {page > 1 ? (
           <Link
             href={pageHref(pathname, query, page - 1)}
             className={linkClass}
             rel="prev"
+            aria-label="Previous page"
           >
-            ← Previous
+            <span className="sm:hidden">←</span>
+            <span className="hidden sm:inline">← Previous</span>
           </Link>
         ) : (
           <span
@@ -67,8 +69,10 @@ export function Pagination({
             href={pageHref(pathname, query, page + 1)}
             className={linkClass}
             rel="next"
+            aria-label="Next page"
           >
-            Next →
+            <span className="sm:hidden">→</span>
+            <span className="hidden sm:inline">Next →</span>
           </Link>
         ) : (
           <span

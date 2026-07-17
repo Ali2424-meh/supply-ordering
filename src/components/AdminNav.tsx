@@ -18,9 +18,10 @@ interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   mobile?: boolean;
+  compact?: boolean;
 }
 
-function AdminNavItem({ href, icon, label, mobile }: NavItemProps) {
+function AdminNavItem({ href, icon, label, mobile, compact }: NavItemProps) {
   const pathname = usePathname();
   const active = pathname.startsWith(href);
 
@@ -44,15 +45,16 @@ function AdminNavItem({ href, icon, label, mobile }: NavItemProps) {
   return (
     <Link
       href={href}
+      title={compact ? label : undefined}
       aria-current={active ? "page" : undefined}
-      className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors ${
+      className={`flex min-h-11 items-center rounded-lg text-sm font-medium transition-colors ${compact ? "justify-center px-2" : "gap-2.5 px-2.5"} ${
         active
           ? "bg-brand-tint font-semibold text-brand"
           : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
       }`}
     >
       {icon}
-      {label}
+      <span className={compact ? "sr-only" : undefined}>{label}</span>
     </Link>
   );
 }
@@ -61,14 +63,15 @@ interface AdminNavProps {
   enabled: boolean;
   isAdmin: boolean;
   mobile?: boolean;
+  compact?: boolean;
 }
 
-export function AdminNav({ enabled, isAdmin, mobile }: AdminNavProps) {
+export function AdminNav({ enabled, isAdmin, mobile, compact }: AdminNavProps) {
   const wrapClass = mobile
     ? "flex flex-row"
     : "flex flex-col gap-0.5";
 
-  const sectionLabelClass = mobile
+  const sectionLabelClass = mobile || compact
     ? "hidden"
     : "mt-4 mb-1 px-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-400";
 
@@ -76,7 +79,7 @@ export function AdminNav({ enabled, isAdmin, mobile }: AdminNavProps) {
     <div className={wrapClass}>
       {enabled ? (
         <>
-          {!mobile && (
+          {!mobile && !compact && (
             <p className="mb-1 px-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
               Supply
             </p>
@@ -86,18 +89,21 @@ export function AdminNav({ enabled, isAdmin, mobile }: AdminNavProps) {
             icon={<ClipboardList size={16} aria-hidden="true" />}
             label="Order requests"
             mobile={mobile}
+            compact={compact}
           />
           <AdminNavItem
             href="/admin/catalogue"
             icon={<Package size={16} aria-hidden="true" />}
             label="Product catalogue"
             mobile={mobile}
+            compact={compact}
           />
           <AdminNavItem
             href="/admin/imports"
             icon={<Upload size={16} aria-hidden="true" />}
             label="Import history"
             mobile={mobile}
+            compact={compact}
           />
         </>
       ) : (
@@ -112,10 +118,11 @@ export function AdminNav({ enabled, isAdmin, mobile }: AdminNavProps) {
         icon={<UserRound size={16} aria-hidden="true" />}
         label="My account"
         mobile={mobile}
+        compact={compact}
       />
       {isAdmin && (
         <>
-          {!mobile && (
+          {!mobile && !compact && (
             <p className={sectionLabelClass}>Platform</p>
           )}
           <AdminNavItem
@@ -123,24 +130,28 @@ export function AdminNav({ enabled, isAdmin, mobile }: AdminNavProps) {
             icon={<BookOpen size={16} aria-hidden="true" />}
             label="Bookings"
             mobile={mobile}
+            compact={compact}
           />
           <AdminNavItem
             href="/admin/customers"
             icon={<Users size={16} aria-hidden="true" />}
             label="Customers"
             mobile={mobile}
+            compact={compact}
           />
           <AdminNavItem
             href="/admin/payouts"
             icon={<DollarSign size={16} aria-hidden="true" />}
             label="Payouts"
             mobile={mobile}
+            compact={compact}
           />
           <AdminNavItem
             href="/admin/settings"
             icon={<Settings size={16} aria-hidden="true" />}
             label="Settings"
             mobile={mobile}
+            compact={compact}
           />
         </>
       )}

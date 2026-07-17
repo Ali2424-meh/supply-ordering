@@ -84,14 +84,14 @@ export function SupplyJourney() {
         </span>
       </div>
 
-      <div className="relative mt-7 grid gap-3 lg:grid-cols-3 lg:gap-5">
+      <div className="relative mt-7 grid gap-3 md:grid-cols-3 md:gap-4 lg:gap-5">
         <motion.div
           aria-hidden="true"
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.9, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute left-[16%] right-[16%] top-10 hidden h-px origin-left bg-gradient-to-r from-blue-300 via-amber-300 to-sky-300 lg:block"
+          className="absolute left-[16%] right-[16%] top-10 hidden h-px origin-left bg-gradient-to-r from-blue-300 via-amber-300 to-sky-300 md:block"
         />
 
         {steps.map((step, index) => {

@@ -10,14 +10,14 @@ export function PageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="mb-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+    <div className="mb-4 flex flex-wrap items-start justify-between gap-x-6 gap-y-3 sm:mb-5 sm:items-end">
       <div className="min-w-0">
         {eyebrow && (
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand">
             {eyebrow}
           </p>
         )}
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">
+        <h1 className="break-words text-xl font-semibold tracking-tight text-zinc-950 sm:text-2xl">
           {title}
         </h1>
         {description && (
@@ -25,7 +25,9 @@ export function PageHeader({
         )}
       </div>
       {actions && (
-        <div className="flex min-w-0 flex-wrap items-center gap-2">{actions}</div>
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2 [&>*]:w-full sm:w-auto sm:[&>*]:w-auto">
+          {actions}
+        </div>
       )}
     </div>
   );

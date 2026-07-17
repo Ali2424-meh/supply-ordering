@@ -15,7 +15,7 @@ marked complete below.
 
 ## How this is being executed
 
-- Branch: `feature/supply-ordering` (branched from `main` at b5f27c2).
+- Branch: `main`.
 - One task at a time, in order. Per task: implement (TDD where specified) →
   commit → review against the task's plan text → fix Critical/Important
   findings → mark complete here.
@@ -171,6 +171,35 @@ reviewed and approved; full suite green after each (lint, typecheck, 24 unit,
 - Claude Code review was requested for this follow-up, but its session remained
   limited until 12pm Asia/Manila and returned no verdict. Re-review this commit
   in the next Claude session; no Claude approval is claimed here.
+
+## Responsive layouts and deployment pass (2026-07-17)
+
+- Replaced the admin area's overflowing horizontal navigation/status strips
+  with three intentional layouts: a native-dialog menu on phones, a compact
+  icon rail on tablets, and the full labelled sidebar on wide desktops.
+- Admin order, catalogue, and import screens now use compact divided lists on
+  phones, progressively disclosed tables on tablets, and full data tables on
+  desktops. Mobile filters collapse into native controls; tablet and desktop
+  filters remain immediately available without horizontal scrolling.
+- Worker catalogue variants now use a native picker on phones and compact pills
+  where space permits. Cart, order-detail, product-detail, login, dashboard,
+  navigation, pagination, and status-update layouts have dedicated phone,
+  tablet, and desktop compositions instead of relying on one stretched canvas.
+- The cleaner dashboard's content rail and request journey were rearranged to
+  use wide screens more deliberately while keeping two-column product browsing
+  and safe-area-aware cart submission on phones.
+- Added browser coverage for admin navigation and status controls at phone,
+  tablet, and desktop sizes. Final local verification is green: lint,
+  typecheck, 24 unit tests, 44 integration tests, 23 Playwright scenarios, and
+  the optimized production build.
+- Added a Vercel production build that applies committed Prisma migrations
+  before generating the client and building Next.js. The linked Vercel project
+  uses a Neon Postgres database in Sydney and keeps deployment credentials out
+  of git. Production seed passwords are supplied only to the one-off seed
+  command and are not stored as runtime environment variables.
+- Claude Code 2.1.169 was explicitly asked for an independent review of this
+  pass, but its account session remained limited until 5pm Asia/Manila and it
+  returned no findings. No Claude approval is claimed for this pass.
 
 ## Deferred minor findings (triage at final review)
 

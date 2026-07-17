@@ -77,3 +77,52 @@ test("core worker and admin screens fit a mobile viewport", async ({ page }) => 
   }
   await expect(page.getByRole("heading", { name: "Your details" })).toBeVisible();
 });
+
+test("admin navigation and order controls adapt across phone, tablet and desktop", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await login(page, "supply@example.com");
+  await page.goto("/admin/orders");
+
+  const menuButton = page.getByRole("button", { name: "Open admin navigation" });
+  await expect(menuButton).toBeVisible();
+  await menuButton.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "Product catalogue" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await page.getByText("Status and sorting").click();
+  await expect(page.locator("form:visible").getByLabel("Order status")).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "Filter orders by status" }),
+  ).toBeHidden();
+
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.reload();
+  await expect(menuButton).toBeHidden();
+  const tabletRail = page.locator("aside");
+  await expect(tabletRail).toBeVisible();
+  const tabletBox = await tabletRail.boundingBox();
+  expect(tabletBox?.width).toBeLessThanOrEqual(80);
+  await expect(page.locator("form:visible").getByLabel("Order status")).toBeVisible();
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.reload();
+  const desktopBox = await page.locator("aside").boundingBox();
+  expect(desktopBox?.width).toBeGreaterThanOrEqual(250);
+  await expect(
+    page.getByRole("navigation", { name: "Filter orders by status" }),
+  ).toBeVisible();
+  await expect(page.locator("form:visible").getByLabel("Order status")).toBeHidden();
+
+  for (const width of [390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const dimensions = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+  }
+});

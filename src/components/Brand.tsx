@@ -8,6 +8,8 @@ interface BrandProps {
   size?: number;
   /** Use white wordmark (for dark backgrounds) */
   onDark?: boolean;
+  /** Keep the mark recognizable in narrow navigation rails. */
+  compact?: boolean;
 }
 
 const variantConfig: Record<BrandVariant, { iconSize: number; textClass: string; squareClass: string }> = {
@@ -23,7 +25,12 @@ const variantConfig: Record<BrandVariant, { iconSize: number; textClass: string;
   },
 };
 
-export function Brand({ variant = "header", size, onDark = false }: BrandProps) {
+export function Brand({
+  variant = "header",
+  size,
+  onDark = false,
+  compact = false,
+}: BrandProps) {
   const config = variantConfig[variant];
   const iconSize = size ?? config.iconSize;
   const wordmarkColor = onDark ? "text-white" : "text-brand";
@@ -35,7 +42,9 @@ export function Brand({ variant = "header", size, onDark = false }: BrandProps) 
       >
         <Package size={iconSize} strokeWidth={2} aria-hidden="true" />
       </span>
-      <span className={`${config.textClass} ${wordmarkColor}`}>SupplyHub</span>
+      <span className={`${config.textClass} ${wordmarkColor} ${compact ? "sr-only" : ""}`}>
+        SupplyHub
+      </span>
     </span>
   );
 }

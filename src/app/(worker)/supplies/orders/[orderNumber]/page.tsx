@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
+import { OrderItemsView } from "@/components/OrderItemsView";
 import { StatusBadge } from "@/components/StatusBadge";
 import { StatusTimeline } from "@/components/StatusTimeline";
 import { ReorderButton } from "@/components/ReorderButton";
@@ -32,64 +33,20 @@ export default async function OrderPage({
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-      <div>
+      <div className="lg:col-start-1 lg:row-start-1">
         <PageHeader
           eyebrow="Order request"
           title={order.orderNumber}
           description={`Placed ${placed}`}
         />
-        <div className={`${panel()} overflow-x-auto`}>
-          <table className="w-full text-sm">
-            <thead className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              <tr>
-                <th scope="col" className="py-3 pl-4 pr-3">Item</th>
-                <th scope="col" className="px-3 text-center">Qty</th>
-                <th scope="col" className="py-3 pl-3 pr-4 text-right">Line total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {order.items.map((item) => (
-                <tr key={item.id}>
-                  <td className="py-2.5 pl-4 pr-3">
-                    <span className="font-medium text-zinc-800">
-                      {item.nameSnapshot}
-                    </span>
-                    {item.variantSnapshot && (
-                      <span className="text-zinc-500"> — {item.variantSnapshot}</span>
-                    )}
-                    <span className="block text-xs text-zinc-400">
-                      {formatAud(item.priceCentsSnapshot)} each
-                    </span>
-                  </td>
-                  <td className="px-3 text-center text-zinc-600">
-                    {item.quantity}
-                  </td>
-                  <td className="py-2.5 pl-3 pr-4 text-right font-medium">
-                    {formatAud(item.priceCentsSnapshot * item.quantity)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot className="border-t border-zinc-200 bg-zinc-50/60">
-              <tr>
-                <td className="py-3 pl-4 font-semibold">Total</td>
-                <td />
-                <td className="py-3 pl-3 pr-4 text-right font-semibold">
-                  {formatAud(order.totalCents)}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+        <OrderItemsView items={order.items} totalCents={order.totalCents} />
 
-        <h2 className="mb-3 mt-7 text-base font-semibold">History</h2>
-        <StatusTimeline events={order.events} showNotes={false} />
       </div>
 
       {/* Summary rail */}
       <section
         aria-labelledby="order-summary-heading"
-        className={`${panel()} overflow-hidden lg:sticky lg:top-24`}
+        className={`${panel()} overflow-hidden lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1`}
       >
         <div className="flex items-center justify-between gap-3 border-b border-zinc-100 px-5 py-3">
           <h2 id="order-summary-heading" className="text-base font-semibold">
@@ -124,6 +81,11 @@ export default async function OrderPage({
           </p>
         </div>
       </section>
+
+      <div className="lg:col-start-1 lg:row-start-2">
+        <h2 className="mb-3 text-base font-semibold">History</h2>
+        <StatusTimeline events={order.events} showNotes={false} />
+      </div>
     </div>
   );
 }

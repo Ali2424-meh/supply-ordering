@@ -34,7 +34,7 @@ export function LoginShowcase() {
   return (
     <section
       data-testid="login-showcase"
-      className="relative isolate min-h-[22rem] overflow-hidden bg-brand px-6 py-7 text-white sm:px-9 sm:py-9 lg:min-h-full lg:px-12 lg:py-11"
+      className="relative isolate min-h-[13rem] overflow-hidden bg-brand px-5 py-5 text-white sm:min-h-[20rem] sm:px-9 sm:py-8 lg:min-h-full lg:px-12 lg:py-11"
       aria-labelledby="showcase-heading"
     >
       <div
@@ -71,20 +71,20 @@ export function LoginShowcase() {
           <Brand variant="sidebar" onDark />
         </motion.div>
 
-        <div className="my-auto py-7 sm:py-9 lg:py-14">
+        <div className="my-auto py-5 sm:py-8 lg:py-14">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.08 }}
             className="max-w-xl"
           >
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-blue-50 backdrop-blur-sm">
+            <p className="mb-3 hidden items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-blue-50 backdrop-blur-sm sm:inline-flex">
               <Sparkles size={13} aria-hidden="true" />
               Simple supply ordering
             </p>
             <h2
               id="showcase-heading"
-              className="max-w-lg text-3xl font-semibold leading-[1.08] tracking-[-0.035em] sm:text-4xl lg:text-[3.15rem]"
+              className="max-w-lg text-2xl font-semibold leading-[1.08] tracking-[-0.035em] sm:text-4xl lg:text-[3.15rem]"
             >
               From shelf to request, without the paperwork.
             </h2>
@@ -94,7 +94,7 @@ export function LoginShowcase() {
             </p>
           </motion.div>
 
-          <ol className="mt-5 grid max-w-2xl grid-cols-3 gap-2 sm:mt-7 sm:gap-2.5 lg:mt-10">
+          <ol className="mt-5 hidden max-w-2xl grid-cols-3 gap-2 sm:mt-7 sm:grid sm:gap-2.5 lg:mt-10">
             {steps.map((step, index) => {
               const Icon = step.icon;
               return (

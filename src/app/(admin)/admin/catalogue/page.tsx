@@ -90,7 +90,7 @@ export default async function AdminCataloguePage({
       />
       <Form
         action="/admin/catalogue"
-        className="mb-4 grid gap-2 text-sm sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_auto_auto_auto]"
+        className="mb-4 grid gap-2 text-sm sm:hidden"
       >
         <label>
           <span className="sr-only">Search products</span>
@@ -102,13 +102,58 @@ export default async function AdminCataloguePage({
             className={input()}
           />
         </label>
+        <details className="rounded-xl border border-zinc-200 bg-white p-2 shadow-sm">
+          <summary className="flex min-h-10 cursor-pointer items-center justify-between px-1 text-sm font-medium text-zinc-700">
+            State and sorting
+            <span className="text-brand">Filters</span>
+          </summary>
+          <div className="mt-2 grid gap-2">
+            <label>
+              <span className="sr-only">Product state</span>
+              <select
+                name="state"
+                defaultValue={state}
+                className={input()}
+              >
+                <option value="">All states</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </label>
+            <label>
+              <span className="sr-only">Sort products</span>
+              <select
+                name="sort"
+                defaultValue={sort}
+                className={input()}
+              >
+                <option value="name">Name</option>
+                <option value="category">Category</option>
+                <option value="price">Price</option>
+              </select>
+            </label>
+          </div>
+        </details>
+        <button className={`${btn("primary", "md")} w-full`}>Apply</button>
+      </Form>
+
+      <Form
+        action="/admin/catalogue"
+        className="mb-4 hidden gap-2 text-sm sm:grid sm:grid-cols-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto]"
+      >
+        <label className="sm:col-span-2 lg:col-span-1">
+          <span className="sr-only">Search products</span>
+          <input
+            name="q"
+            defaultValue={q}
+            placeholder="Search name, variant, SKU or category…"
+            maxLength={200}
+            className={input()}
+          />
+        </label>
         <label>
           <span className="sr-only">Product state</span>
-          <select
-            name="state"
-            defaultValue={state}
-            className={input()}
-          >
+          <select name="state" defaultValue={state} className={input()}>
             <option value="">All states</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -116,28 +161,26 @@ export default async function AdminCataloguePage({
         </label>
         <label>
           <span className="sr-only">Sort products</span>
-          <select
-            name="sort"
-            defaultValue={sort}
-            className={input()}
-          >
+          <select name="sort" defaultValue={sort} className={input()}>
             <option value="name">Name</option>
             <option value="category">Category</option>
             <option value="price">Price</option>
           </select>
         </label>
-        <button className={btn("primary", "md")}>Apply</button>
+        <button className={`${btn("primary", "md")} w-full sm:col-span-2 lg:col-span-1 lg:w-auto`}>
+          Apply
+        </button>
       </Form>
       {products.length === 0 ? (
         <EmptyState title="No products found" />
       ) : (
         <>
-          <ul className="grid gap-2 md:hidden">
+          <ul className="divide-y divide-zinc-100 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm sm:hidden">
             {products.map((product) => (
               <li key={product.id}>
                 <Link
                   href={`/admin/catalogue/${product.id}/edit`}
-                  className="block rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:border-zinc-300 hover:shadow"
+                  className="block p-3 transition hover:bg-zinc-50"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -166,14 +209,14 @@ export default async function AdminCataloguePage({
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm md:block">
-            <table className="w-full min-w-4xl text-sm">
+          <div className="hidden overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm sm:block">
+            <table className="w-full table-fixed text-sm">
               <thead className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
                 <tr>
-                  <th scope="col" className="py-3 pl-4 pr-3">Name</th>
-                  <th scope="col" className="px-3">Variant</th>
-                  <th scope="col" className="px-3">Category</th>
-                  <th scope="col" className="px-3">Source</th>
+                  <th scope="col" className="w-1/2 py-3 pl-4 pr-3 xl:w-auto">Name</th>
+                  <th scope="col" className="hidden px-3 xl:table-cell">Variant</th>
+                  <th scope="col" className="hidden px-3 xl:table-cell">Category</th>
+                  <th scope="col" className="hidden px-3 xl:table-cell">Source</th>
                   <th scope="col" className="px-3">State</th>
                   <th scope="col" className="py-3 pl-3 pr-4 text-right">Price</th>
                 </tr>
@@ -192,10 +235,15 @@ export default async function AdminCataloguePage({
                       >
                         {product.name}
                       </Link>
+                      <span className="mt-0.5 block truncate text-xs text-zinc-500 xl:hidden">
+                        {[product.variantName, product.category, product.source === "SYNCED" ? "Synced" : "Manual"]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </span>
                     </td>
-                    <td className="px-3 text-zinc-600">{product.variantName ?? "—"}</td>
-                    <td className="px-3 text-zinc-600">{product.category ?? "—"}</td>
-                    <td className="px-3 text-zinc-600">
+                    <td className="hidden px-3 text-zinc-600 xl:table-cell">{product.variantName ?? "—"}</td>
+                    <td className="hidden px-3 text-zinc-600 xl:table-cell">{product.category ?? "—"}</td>
+                    <td className="hidden px-3 text-zinc-600 xl:table-cell">
                       {product.source === "SYNCED" ? "Synced" : "Manual"}
                     </td>
                     <td className="px-3">

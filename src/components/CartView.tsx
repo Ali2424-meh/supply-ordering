@@ -93,7 +93,7 @@ export function CartView({ lines }: { lines: Line[] }) {
 
   return (
     /* pb-24 on mobile creates space so line items aren't hidden under the sticky bar */
-    <div className="pb-24 md:pb-0 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-8">
+    <div className="pb-24 md:grid md:grid-cols-[minmax(0,1fr)_300px] md:items-start md:gap-6 md:pb-0 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Cart</h1>
         <p className="mb-4 mt-1 text-sm text-zinc-500">
@@ -116,7 +116,7 @@ export function CartView({ lines }: { lines: Line[] }) {
                     }
                   : {}
               }
-              className={`grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 py-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto_auto_auto] ${invalid.includes(line.productId) ? "rounded bg-red-50 px-2" : ""}`}
+              className={`grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 py-3 lg:grid-cols-[3rem_minmax(0,1fr)_auto_auto_auto] ${invalid.includes(line.productId) ? "rounded bg-red-50 px-2" : ""}`}
             >
               {/* External/manual image hosts stay browser-fetched. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -146,12 +146,12 @@ export function CartView({ lines }: { lines: Line[] }) {
               <button
                 disabled={pending}
                 onClick={() => handleRemove(line)}
-                className="flex min-h-11 min-w-11 items-center justify-center text-zinc-400 transition hover:text-red-500 sm:order-5"
+                className="flex min-h-11 min-w-11 items-center justify-center text-zinc-400 transition hover:text-red-500 lg:order-5"
                 aria-label={`Remove ${line.name}`}
               >
                 <Trash2 size={16} aria-hidden="true" />
               </button>
-              <div className="col-span-2 flex w-fit items-center rounded-lg border border-zinc-300 sm:col-span-1 sm:order-3">
+              <div className="col-span-2 flex w-fit items-center rounded-lg border border-zinc-300 lg:col-span-1 lg:order-3">
                 <button
                   disabled={pending}
                   onClick={() =>
@@ -178,7 +178,7 @@ export function CartView({ lines }: { lines: Line[] }) {
                   +
                 </button>
               </div>
-              <p className="text-right text-sm font-semibold sm:order-4 sm:w-20">
+              <p className="text-right text-sm font-semibold lg:order-4 lg:w-20">
                 {formatAud(line.priceCents * line.quantity)}
               </p>
             </motion.li>
@@ -187,10 +187,20 @@ export function CartView({ lines }: { lines: Line[] }) {
         </ul>
       </div>
 
+      <div className="mt-4 text-center text-xs leading-5 text-zinc-500 md:hidden">
+        <p>No payment is taken in the app. Operations will contact you to arrange payment.</p>
+        <Link
+          href="/supplies/catalogue"
+          className="mt-1 inline-flex min-h-10 items-center font-medium text-brand"
+        >
+          Continue browsing
+        </Link>
+      </div>
+
       {/* Order summary (always in DOM; testids live here since E2E runs at 1280px) */}
       <section
         aria-labelledby="summary-heading"
-        className={`${panel()} mt-6 overflow-hidden lg:sticky lg:top-24 lg:mt-0`}
+        className={`${panel()} mt-6 hidden overflow-hidden md:sticky md:top-24 md:mt-0 md:block`}
       >
         <h2
           id="summary-heading"
@@ -243,7 +253,7 @@ export function CartView({ lines }: { lines: Line[] }) {
       </section>
 
       {/* Mobile sticky bottom summary bar — mirrors the desktop submit but without testids to avoid duplication */}
-      <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-zinc-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-zinc-200 bg-white/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-lg backdrop-blur md:hidden">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-3">
           <div>
             <p className="text-xs text-zinc-500">Total</p>

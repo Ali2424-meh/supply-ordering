@@ -38,8 +38,21 @@ export function StatusUpdateForm({
     <div className="h-fit rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
       <h2 className="mb-3 text-sm font-semibold">Update status</h2>
 
+      <label className="mb-3 block sm:hidden">
+        <span className="sr-only">Update status</span>
+        <select
+          value={status}
+          onChange={(event) => setStatus(event.target.value as OrderStatus)}
+          className="min-h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-700 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+        >
+          {STATUS_ORDER.map((item) => (
+            <option key={item} value={item}>{STATUS_LABELS[item]}</option>
+          ))}
+        </select>
+      </label>
+
       {/* Native radio group — keyboard-accessible via Tab-into + arrow keys */}
-      <fieldset data-testid="status-select" className="mb-3">
+      <fieldset data-testid="status-select" className="mb-3 hidden sm:block">
         <legend className="sr-only">Update status</legend>
         <div className="flex flex-wrap gap-2">
           {STATUS_ORDER.map((s) => {

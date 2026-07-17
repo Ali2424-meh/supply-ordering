@@ -33,8 +33,8 @@ export default async function SuppliesHome({
       by: ["category"],
       where: { active: true, category: { not: null } },
       _count: { _all: true },
-      orderBy: { category: "asc" },
-      take: 7,
+      orderBy: [{ _count: { category: "desc" } }, { category: "asc" }],
+      take: 5,
     }),
     prisma.product.count({ where: { active: true } }),
   ]);
@@ -123,12 +123,15 @@ export default async function SuppliesHome({
         </ScrollReveal>
 
         {/* Right rail */}
-        <ScrollReveal delay={0.05}>
-          <div className="space-y-4 lg:sticky lg:top-24">
+        <ScrollReveal
+          delay={0.05}
+          className="lg:col-start-2 lg:row-span-2 lg:row-start-1"
+        >
+          <div className="grid gap-4 sm:grid-cols-2 lg:sticky lg:top-24 lg:block lg:space-y-4">
             {cartCount > 0 && (
               <Link
                 href="/supplies/cart"
-                className="group flex items-center gap-3 rounded-2xl border border-brand/20 bg-brand-tint p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md"
+                className="group flex items-center gap-3 rounded-2xl border border-brand/20 bg-brand-tint p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md sm:col-span-2 lg:col-span-1"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-sm transition-transform group-hover:rotate-[-7deg] group-hover:scale-105">
                   <ShoppingCart size={19} aria-hidden="true" />
@@ -147,7 +150,7 @@ export default async function SuppliesHome({
             {categoryCounts.length > 0 && (
               <nav aria-label="Browse by category" className={panel()}>
                 <p className="border-b border-zinc-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-                  Browse by category
+                  Popular categories
                 </p>
                 <ul className="divide-y divide-zinc-100">
                   {categoryCounts.map((row) => (
@@ -187,9 +190,11 @@ export default async function SuppliesHome({
             </div>
           </div>
         </ScrollReveal>
-      </div>
 
-      <SupplyJourney />
+        <ScrollReveal className="lg:col-start-1 lg:row-start-2">
+          <SupplyJourney />
+        </ScrollReveal>
+      </div>
     </div>
   );
 }

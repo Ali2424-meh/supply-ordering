@@ -6,11 +6,11 @@ export const metadata: Metadata = { title: "Sign in" };
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_80%_10%,var(--color-brand-soft),transparent_30%),linear-gradient(135deg,#f8fafc,#f4f4f5)] p-3 sm:p-5">
-      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] w-full max-w-7xl overflow-hidden rounded-[1.75rem] border border-white/70 bg-white shadow-2xl shadow-blue-950/10 sm:min-h-[calc(100vh-2.5rem)] lg:grid-cols-[1.15fr_0.85fr]">
+    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_80%_10%,var(--color-brand-soft),transparent_30%),linear-gradient(135deg,#f8fafc,#f4f4f5)] sm:p-5">
+      <div className="mx-auto grid min-h-screen w-full max-w-7xl overflow-hidden bg-white shadow-2xl shadow-blue-950/10 sm:min-h-[calc(100vh-2.5rem)] sm:rounded-[1.75rem] sm:border sm:border-white/70 lg:grid-cols-[1.15fr_0.85fr]">
         <LoginShowcase />
         <section
-          className="flex items-center justify-center px-6 py-10 sm:px-10 lg:px-12"
+          className="flex items-center justify-center px-5 py-8 sm:px-10 sm:py-10 lg:px-12"
           aria-labelledby="login-heading"
         >
           <div className="w-full max-w-sm">
