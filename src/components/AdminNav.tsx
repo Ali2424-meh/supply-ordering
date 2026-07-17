@@ -10,6 +10,7 @@ import {
   Users,
   DollarSign,
   Settings,
+  UserRound,
 } from "lucide-react";
 
 interface NavItemProps {
@@ -106,6 +107,12 @@ export function AdminNav({ enabled, isAdmin, mobile }: AdminNavProps) {
           </p>
         )
       )}
+      <AdminNavItem
+        href="/admin/account"
+        icon={<UserRound size={16} aria-hidden="true" />}
+        label="My account"
+        mobile={mobile}
+      />
       {isAdmin && (
         <>
           {!mobile && (

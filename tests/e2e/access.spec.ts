@@ -22,6 +22,10 @@ test("A-02: admin can update an order status", async ({ page }) => {
 test("M-01 + M-02: manager has no supply access", async ({ page }) => {
   await login(page, "manager@example.com");
   await expect(page).toHaveURL(/\/$/);
+  await expect(
+    page.getByRole("heading", { name: /welcome, mia/i }),
+  ).toBeVisible();
+  await expect(page.locator("body")).toContainText("Manager account");
   await expect(page.locator("body")).not.toContainText("Order requests");
   await page.goto("/admin/orders");
   await expect(page).not.toHaveURL(/\/admin\/orders/);
@@ -32,6 +36,10 @@ test("M-01 + M-02: manager has no supply access", async ({ page }) => {
 test("U-01: customer sees no supply ordering", async ({ page }) => {
   await login(page, "customer@example.com");
   await expect(page).toHaveURL(/\/$/);
+  await expect(
+    page.getByRole("heading", { name: /welcome, casey/i }),
+  ).toBeVisible();
+  await expect(page.locator("body")).toContainText("Customer account");
   await expect(page.locator("body")).not.toContainText("Supplies");
 });
 

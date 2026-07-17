@@ -112,6 +112,26 @@ reviewed and approved; full suite green after each (lint, typecheck, 24 unit,
 - **E:** local ImportRun rows truncated (user request); production DB starts
   empty anyway.
 
+## Final specification alignment pass (2026-07-17)
+
+- Added a guarded **My account** screen for Supply Managers and Administrators
+  to maintain their name and phone while keeping the login email read-only.
+- Replaced the generic unfinished-looking Manager/Customer page with a polished,
+  role-specific landing that clearly communicates the intentional supply-access
+  boundary; no out-of-scope Customer ordering was introduced.
+- Added the same subtle, reduced-motion-aware page entrance to the admin area
+  that the worker portal already uses. Existing cart, category, timeline,
+  confirmation, toast, and product animations remain unchanged.
+- Corrected `npm run db:seed` to invoke `prisma db seed`, and replaced joke-style
+  demo names with professional fixtures for fresh databases. Reseeding preserves
+  names edited through Account Settings.
+- Added server-action authorization/validation coverage, an end-to-end account
+  update scenario, role-landing assertions, and mobile overflow coverage for the
+  new account page.
+- Final verification: lint and typecheck clean; 24 unit, 44 integration, and 20
+  Playwright scenarios pass; production build passes. Desktop and 390px mobile
+  screenshots were inspected with no horizontal overflow.
+
 ## Deferred minor findings (triage at final review)
 
 - `OrderItem.productId` deliberately has no FK constraint (snapshot design) —
@@ -142,3 +162,9 @@ reviewed and approved; full suite green after each (lint, typecheck, 24 unit,
     comment added. One cosmetic item accepted as-is: admin layout renders a
     "supply ordering is disabled" shell when the feature is off (child pages
     independently 404 — no data exposure).
+- **Claude Code final-alignment review completed 2026-07-17:** initially found
+  that account updates incorrectly inherited the supply feature toggle. The
+  action now uses a fresh role/disabled guard without the supply toggle, a
+  disabled-toggle regression test was added, and live-region feedback was
+  improved. Claude re-reviewed the fix and returned **APPROVED**, with no
+  Critical or Important findings.

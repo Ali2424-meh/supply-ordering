@@ -11,8 +11,18 @@ test("SM-01 + SM-02: supply nav present; platform admin areas absent", async ({
   await expect(page).toHaveURL(/\/admin\/orders/);
   await expect(page.locator("aside")).toContainText("Order requests");
   await expect(page.locator("aside")).toContainText("Product catalogue");
+  await expect(page.locator("aside")).toContainText("My account");
   await expect(page.locator("aside")).not.toContainText("Bookings");
   await expect(page.locator("aside")).not.toContainText("Payouts");
+});
+
+test("supply manager can update account contact details", async ({ page }) => {
+  await login(page, "supply@example.com");
+  await page.goto("/admin/account");
+  await expect(page.getByRole("heading", { name: "Your details" })).toBeVisible();
+  await page.getByLabel("Phone").fill("0400 123 456");
+  await page.getByRole("button", { name: "Save changes" }).click();
+  await expect(page.getByRole("status")).toContainText("saved");
 });
 
 test("SM-03 + SM-04 + SM-05: list, detail, status update and note", async ({

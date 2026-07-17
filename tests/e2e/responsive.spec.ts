@@ -15,6 +15,13 @@ test("core worker and admin screens fit a mobile viewport", async ({ page }) => 
 
   await page.context().clearCookies();
   await login(page, "supply@example.com");
-  await page.goto("/admin/orders");
-  await expect(page.getByRole("heading", { name: "Order requests" })).toBeVisible();
+  for (const route of ["/admin/orders", "/admin/account"]) {
+    await page.goto(route);
+    const dimensions = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+  }
+  await expect(page.getByRole("heading", { name: "Your details" })).toBeVisible();
 });

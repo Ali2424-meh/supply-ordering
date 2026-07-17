@@ -5,12 +5,12 @@ const prisma = new PrismaClient();
 
 const USERS: Array<{ name: string; email: string; role: Role; disabled?: boolean }> = [
   { name: "Cara Cleaner", email: "cleaner@example.com", role: "CLEANER" },
-  { name: "Dan Disabled", email: "disabled@example.com", role: "CLEANER", disabled: true },
+  { name: "Drew Disabled", email: "disabled@example.com", role: "CLEANER", disabled: true },
   { name: "Wendy Worker", email: "cleaner2@example.com", role: "CLEANER" },
   { name: "Sam Supply", email: "supply@example.com", role: "SUPPLY_MANAGER" },
   { name: "Ada Admin", email: "admin@example.com", role: "ADMIN" },
-  { name: "Mo Manager", email: "manager@example.com", role: "MANAGER" },
-  { name: "Cust Omer", email: "customer@example.com", role: "CUSTOMER" },
+  { name: "Mia Manager", email: "manager@example.com", role: "MANAGER" },
+  { name: "Casey Customer", email: "customer@example.com", role: "CUSTOMER" },
 ];
 
 async function main() {

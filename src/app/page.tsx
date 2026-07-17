@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { RoleLanding } from "@/components/RoleLanding";
 import { homeFor } from "@/lib/auth";
 import { currentUser } from "@/lib/guards";
 
@@ -12,10 +13,17 @@ export default async function Home() {
   ) {
     redirect(homeFor(user.role));
   }
+  const manager = user.role === "MANAGER";
   return (
-    <main className="p-8">
-      <h1 className="text-xl font-semibold">Welcome</h1>
-      <p className="text-zinc-600">Nothing here for your role yet.</p>
-    </main>
+    <RoleLanding
+      name={user.name}
+      email={user.email}
+      roleLabel={manager ? "Manager account" : "Customer account"}
+      description={
+        manager
+          ? "This account is set up for operations work. Supply ordering is available only to cleaners and supply staff."
+          : "This account is set up for customer access. Supply ordering is available only to approved field workers."
+      }
+    />
   );
 }
