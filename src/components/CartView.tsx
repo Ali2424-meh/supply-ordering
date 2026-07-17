@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { Trash2 } from "lucide-react";
@@ -10,6 +11,7 @@ import { AnimatedMoney } from "@/components/AnimatedMoney";
 import { useToast } from "@/components/Toaster";
 import { cartTotalCents } from "@/lib/cart";
 import { formatAud } from "@/lib/format";
+import { btn, panel } from "@/lib/ui";
 
 type Line = {
   productId: string;
@@ -87,11 +89,18 @@ export function CartView({ lines }: { lines: Line[] }) {
     });
   }
 
+  const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
+
   return (
     /* pb-24 on mobile creates space so line items aren't hidden under the sticky bar */
-    <div className="pb-24 md:pb-0">
-      <h1 className="mb-4 text-xl font-semibold">Cart</h1>
-      <ul>
+    <div className="pb-24 md:pb-0 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-8">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Cart</h1>
+        <p className="mb-4 mt-1 text-sm text-zinc-500">
+          {itemCount} item{itemCount === 1 ? "" : "s"} across {lines.length} line
+          {lines.length === 1 ? "" : "s"}
+        </p>
+        <ul className="divide-y divide-zinc-100 overflow-hidden rounded-2xl border border-zinc-200 bg-white px-4">
         <AnimatePresence initial={false}>
           {lines.map((line) => (
             <motion.li
@@ -107,7 +116,7 @@ export function CartView({ lines }: { lines: Line[] }) {
                     }
                   : {}
               }
-              className={`grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 border-b py-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto_auto_auto] ${invalid.includes(line.productId) ? "rounded bg-red-50 px-2" : ""}`}
+              className={`grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 py-3 sm:grid-cols-[3rem_minmax(0,1fr)_auto_auto_auto] ${invalid.includes(line.productId) ? "rounded bg-red-50 px-2" : ""}`}
             >
               {/* External/manual image hosts stay browser-fetched. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -175,35 +184,63 @@ export function CartView({ lines }: { lines: Line[] }) {
             </motion.li>
           ))}
         </AnimatePresence>
-      </ul>
-
-      {/* Desktop total + submit (always in DOM; testids live here since E2E runs at 1280px) */}
-      <div className="mt-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-zinc-500">Estimated total</p>
-          <p className="text-lg font-bold" data-testid="cart-total">
-            <AnimatedMoney cents={total} />
-          </p>
-        </div>
-        {error && (
-          <p role="alert" className="mt-2 text-sm text-red-600">
-            {error}
-          </p>
-        )}
-        <motion.button
-          data-testid="submit-order"
-          whileTap={{ scale: 0.97 }}
-          disabled={pending}
-          onClick={submit}
-          className="mt-4 min-h-12 w-full rounded-xl bg-brand py-3 font-medium text-white shadow-sm transition hover:bg-brand-hover disabled:opacity-60"
-        >
-          {pending ? "Submitting…" : "Submit request"}
-        </motion.button>
-        <p className="mt-2 text-center text-xs text-zinc-500">
-          No payment is taken in the app. The operations team will contact you to
-          confirm and arrange payment.
-        </p>
+        </ul>
       </div>
+
+      {/* Order summary (always in DOM; testids live here since E2E runs at 1280px) */}
+      <section
+        aria-labelledby="summary-heading"
+        className={`${panel()} mt-6 overflow-hidden lg:sticky lg:top-24 lg:mt-0`}
+      >
+        <h2
+          id="summary-heading"
+          className="border-b border-zinc-100 px-5 py-3 text-base font-semibold"
+        >
+          Order summary
+        </h2>
+        <div className="px-5 py-4">
+          <dl className="divide-y divide-zinc-100 text-sm">
+            <div className="flex items-center justify-between py-2.5">
+              <dt className="text-zinc-500">
+                Items ({itemCount})
+              </dt>
+              <dd className="font-medium text-zinc-800">
+                {formatAud(total)}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between py-2.5">
+              <dt className="text-zinc-500">Estimated total</dt>
+              <dd className="text-lg font-bold" data-testid="cart-total">
+                <AnimatedMoney cents={total} />
+              </dd>
+            </div>
+          </dl>
+          {error && (
+            <p role="alert" className="mt-2 text-sm text-red-600">
+              {error}
+            </p>
+          )}
+          <motion.button
+            data-testid="submit-order"
+            whileTap={{ scale: 0.97 }}
+            disabled={pending}
+            onClick={submit}
+            className={`${btn("primary", "lg")} mt-4`}
+          >
+            {pending ? "Submitting…" : "Submit request"}
+          </motion.button>
+          <p className="mt-3 text-center text-xs leading-5 text-zinc-500">
+            No payment is taken in the app. The operations team will contact
+            you to confirm and arrange payment.
+          </p>
+          <Link
+            href="/supplies/catalogue"
+            className="mt-2 block text-center text-sm font-medium text-brand hover:underline"
+          >
+            Continue browsing
+          </Link>
+        </div>
+      </section>
 
       {/* Mobile sticky bottom summary bar — mirrors the desktop submit but without testids to avoid duplication */}
       <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-zinc-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur md:hidden">

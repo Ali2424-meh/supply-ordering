@@ -15,7 +15,7 @@ export default async function CartPage() {
   });
   if (items.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-6xl">
         <EmptyState
           title="Your cart is empty"
           hint="Browse the catalogue to add supplies."
@@ -24,7 +24,7 @@ export default async function CartPage() {
     );
   }
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-6xl">
       <CartView
         lines={items.map((item) => ({
           productId: item.productId,
