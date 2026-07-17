@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ShoppingCart, ShoppingBag } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
+import { DashboardHero } from "@/components/DashboardHero";
 import { Pagination } from "@/components/Pagination";
 import { ReorderButton } from "@/components/ReorderButton";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -43,17 +44,15 @@ export default async function SuppliesHome({
     take: PAGE_SIZE,
   });
 
-  const firstName = user.name?.split(" ")[0] ?? "there";
+  const firstName = user.name?.trim().split(/\s+/)[0] || "there";
 
   return (
     <div className="space-y-6">
-      {/* Greeting */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight" style={{ fontFamily: "var(--font-display, inherit)" }}>
-          Hello, {firstName}
-        </h1>
-        <p className="mt-0.5 text-sm text-zinc-500">Here are your supply orders.</p>
-      </div>
+      <DashboardHero
+        firstName={firstName}
+        totalOrders={total}
+        cartCount={cartCount}
+      />
 
       {/* Resume-cart card (shown only when cart has items) */}
       {cartCount > 0 && (

@@ -9,6 +9,15 @@ test("C-01: cleaner with feature enabled sees Supplies", async ({ page }) => {
   await login(page, "cleaner@example.com");
   await expect(page).toHaveURL(/\/supplies/);
   await expect(page.locator("header nav")).toContainText("Supplies");
+  await expect(page.getByTestId("dashboard-hero")).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Everything you need, one request away.",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Browse catalogue" }),
+  ).toHaveAttribute("href", "/supplies/catalogue");
 });
 
 test("C-02: feature disabled hides Supplies", async ({ page }) => {
@@ -52,7 +61,7 @@ test("C-04: product detail shows price, description, external link", async ({
 }) => {
   await login(page, "cleaner@example.com");
   await page.goto("/supplies/catalogue");
-  await page.getByTestId("product-card").first().click();
+  await page.getByTestId("product-card").first().getByRole("link").click();
   await expect(page).toHaveURL(/\/supplies\/catalogue\/[^/]+$/);
   await expect(page.locator("body")).toContainText("$18.95");
   await expect(page.locator("body")).toContainText("Streak-free glass cleaner");
@@ -65,7 +74,7 @@ test("C-05 + C-10: cart persists across navigation and submits", async ({
 }) => {
   await login(page, "cleaner@example.com");
   await page.goto("/supplies/catalogue");
-  await page.getByTestId("product-card").first().click();
+  await page.getByTestId("product-card").first().getByRole("link").click();
   await page.getByTestId("add-to-cart").click();
   await expect(page.getByLabel("Cart, 1 items")).toBeVisible();
   await page.goto("/supplies/catalogue");
@@ -78,7 +87,7 @@ test("C-05 + C-10: cart persists across navigation and submits", async ({
 test("C-06: inactive cart product is rejected and identified", async ({ page }) => {
   await login(page, "cleaner@example.com");
   await page.goto("/supplies/catalogue");
-  await page.getByTestId("product-card").first().click();
+  await page.getByTestId("product-card").first().getByRole("link").click();
   await expect(page).toHaveURL(/\/supplies\/catalogue\/[^/]+$/);
   const productId = new URL(page.url()).pathname.split("/").at(-1)!;
   await page.getByTestId("add-to-cart").click();
@@ -102,7 +111,7 @@ test("C-07 + C-08: own orders only; detail is read-only", async ({ page }) => {
   await login(page, "cleaner@example.com");
   await page.goto("/supplies");
   await expect(page.getByTestId("order-card").first()).toBeVisible();
-  await page.getByTestId("order-card").first().click();
+  await page.getByTestId("order-card").first().getByRole("link").click();
   await expect(page.getByTestId("status-timeline")).toBeVisible();
   await expect(page.getByTestId("status-select")).toHaveCount(0);
   await page.context().clearCookies();

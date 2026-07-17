@@ -132,6 +132,29 @@ reviewed and approved; full suite green after each (lint, typecheck, 24 unit,
   Playwright scenarios pass; production build passes. Desktop and 390px mobile
   screenshots were inspected with no horizontal overflow.
 
+## Competition animation and landing polish (2026-07-17)
+
+- Reworked the public sign-in screen into a responsive split entrance with a
+  branded animated showcase, staggered workflow cards, polished form controls,
+  and a mobile layout that keeps the Sign in action in the first viewport.
+- Replaced the cleaner home greeting with a focused animated hero, prominent
+  catalogue call-to-action, live order/cart counts, and floating supply cards
+  that collapse away on smaller screens to protect content density.
+- Motion is limited to opacity and transforms, shares the existing Motion
+  provider, and becomes static when the user requests reduced motion. No canvas,
+  video, generated imagery, or additional runtime dependency was introduced.
+- Hardened the Playwright login helper to await a real authentication outcome
+  and changed catalogue/order navigation checks to click their actual links,
+  removing two timing/hit-target flakes exposed by the richer entrance.
+- Added browser assertions for the entrance content, dashboard hero/CTA, 390px
+  overflow, and reduced-motion state. Desktop and mobile screenshots of both
+  screens were inspected; lint, typecheck, 24 unit, 44 integration, and 21
+  Playwright scenarios pass; the optimized production build passes.
+- Claude Code independent review was invoked after validation, but Claude hit
+  its session limit before returning a verdict. No approval is claimed; the next
+  Claude session should review this animation commit from the recorded clean
+  baseline.
+
 ## Deferred minor findings (triage at final review)
 
 - `OrderItem.productId` deliberately has no FK constraint (snapshot design) —

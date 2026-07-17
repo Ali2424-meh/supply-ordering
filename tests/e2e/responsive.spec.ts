@@ -1,6 +1,30 @@
 import { expect, test } from "@playwright/test";
 import { login } from "./helpers";
 
+test("public entrance is responsive and respects reduced motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/login");
+
+  await expect(
+    page.getByRole("heading", {
+      name: "From shelf to request, without the paperwork.",
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+
+  const dimensions = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    clientWidth: document.documentElement.clientWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+
+  const icon = page.getByTestId("login-step-icon").first();
+  await expect(icon).toHaveCSS("transform", "none");
+});
+
 test("core worker and admin screens fit a mobile viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await login(page, "cleaner@example.com");

@@ -15,7 +15,7 @@ export function LoginForm() {
           autoComplete="email"
           required
           placeholder="you@example.com"
-          className="min-h-11 rounded-lg border border-zinc-300 bg-white p-2.5 font-normal shadow-sm"
+          className="min-h-12 rounded-xl border border-zinc-300 bg-white px-3 py-2.5 font-normal shadow-sm transition placeholder:text-zinc-400 hover:border-zinc-400 focus:border-brand focus:ring-3 focus:ring-emerald-100 focus:outline-none"
         />
       </label>
       <label className="grid gap-1.5 text-sm font-medium">
@@ -25,7 +25,7 @@ export function LoginForm() {
           type="password"
           autoComplete="current-password"
           required
-          className="min-h-11 rounded-lg border border-zinc-300 bg-white p-2.5 font-normal shadow-sm"
+          className="min-h-12 rounded-xl border border-zinc-300 bg-white px-3 py-2.5 font-normal shadow-sm transition hover:border-zinc-400 focus:border-brand focus:ring-3 focus:ring-emerald-100 focus:outline-none"
         />
       </label>
       {state.error && (
@@ -35,7 +35,7 @@ export function LoginForm() {
       )}
       <button
         disabled={pending}
-        className="mt-1 min-h-11 rounded-lg bg-zinc-900 p-2 font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:opacity-50"
+        className="mt-2 min-h-12 rounded-xl bg-brand p-2.5 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-md disabled:translate-y-0 disabled:opacity-50"
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>

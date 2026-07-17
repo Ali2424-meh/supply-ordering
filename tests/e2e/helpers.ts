@@ -8,8 +8,12 @@ export async function login(
   await page.goto("/login");
   await page.fill('input[name="email"]', email);
   await page.fill('input[name="password"]', password);
+  const authenticationFinished = Promise.race([
+    page.waitForURL((url) => url.pathname !== "/login"),
+    page.locator("form p[role='alert']").waitFor({ state: "visible" }),
+  ]);
   await page.getByRole("button", { name: "Sign in" }).click();
-  await page.waitForLoadState("networkidle");
+  await authenticationFinished;
 }
 
 export async function setFeature(page: Page, enabled: boolean) {
