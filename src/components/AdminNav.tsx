@@ -29,10 +29,10 @@ function AdminNavItem({ href, icon, label, mobile }: NavItemProps) {
       <Link
         href={href}
         aria-current={active ? "page" : undefined}
-        className={`flex shrink-0 items-center gap-2 whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
+        className={`flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
           active
-            ? "border-brand text-white"
-            : "border-transparent text-zinc-400 hover:text-zinc-100"
+            ? "border-brand text-brand"
+            : "border-transparent text-zinc-500 hover:text-zinc-800"
         }`}
       >
         {icon}
@@ -47,8 +47,8 @@ function AdminNavItem({ href, icon, label, mobile }: NavItemProps) {
       aria-current={active ? "page" : undefined}
       className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors ${
         active
-          ? "bg-zinc-800 text-white"
-          : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
+          ? "bg-brand-tint font-semibold text-brand"
+          : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
       }`}
     >
       {icon}
@@ -70,14 +70,14 @@ export function AdminNav({ enabled, isAdmin, mobile }: AdminNavProps) {
 
   const sectionLabelClass = mobile
     ? "hidden"
-    : "mt-4 mb-1 px-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500";
+    : "mt-4 mb-1 px-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-400";
 
   return (
     <div className={wrapClass}>
       {enabled ? (
         <>
           {!mobile && (
-            <p className="mb-1 px-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <p className="mb-1 px-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
               Supply
             </p>
           )}
