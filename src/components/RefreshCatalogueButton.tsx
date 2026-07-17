@@ -36,7 +36,7 @@ export function RefreshCatalogueButton() {
             }
           })
         }
-        className="min-h-10 rounded bg-brand px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
+        className="min-h-10 rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-hover disabled:opacity-60"
       >
         {pending ? "Refreshing…" : "Refresh catalogue"}
       </motion.button>

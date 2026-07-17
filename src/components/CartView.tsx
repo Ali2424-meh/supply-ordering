@@ -127,7 +127,7 @@ export function CartView({ lines }: { lines: Line[] }) {
                 onError={(event) => {
                   event.currentTarget.src = "/placeholder.svg";
                 }}
-                className="h-12 w-12 rounded bg-zinc-100 object-cover"
+                className="h-12 w-12 rounded-lg bg-zinc-100 object-cover"
               />
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">
@@ -151,7 +151,7 @@ export function CartView({ lines }: { lines: Line[] }) {
               >
                 <Trash2 size={16} aria-hidden="true" />
               </button>
-              <div className="col-span-2 flex w-fit items-center rounded border sm:col-span-1 sm:order-3">
+              <div className="col-span-2 flex w-fit items-center rounded-lg border border-zinc-300 sm:col-span-1 sm:order-3">
                 <button
                   disabled={pending}
                   onClick={() =>
