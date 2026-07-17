@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { Prisma } from "@prisma/client";
 import { CategoryFilter } from "@/components/CategoryFilter";
+import { PageHeader } from "@/components/PageHeader";
 import { EmptyState } from "@/components/EmptyState";
 import { Pagination } from "@/components/Pagination";
 import { ProductGrid } from "@/components/ProductGrid";
@@ -66,7 +67,11 @@ export default async function CataloguePage({
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold">Product catalogue</h1>
+      <PageHeader
+        eyebrow="Supplies"
+        title="Product catalogue"
+        description={`${total.toLocaleString("en-AU")} item${total === 1 ? "" : "s"}${category ? ` in ${category}` : ""}${q ? ` matching “${q}”` : ""}`}
+      />
       <div className="mb-3">
         <Suspense fallback={
           <div className="min-h-10 w-full rounded-lg border border-zinc-200 bg-white shadow-sm" />
